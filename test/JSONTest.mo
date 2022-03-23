@@ -1,4 +1,4 @@
-import JSON "mo:json/json";
+import JSON "mo:json/JSON";
 import Debug "mo:base/Debug";
 
 
