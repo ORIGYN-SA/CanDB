@@ -12,6 +12,19 @@ module {
     RBT.init<E.SK, E.AttributeMap>();
   };
 
+  public func get(rt: RangeTree, sk: E.SK): ?E.AttributeMap {
+    RBT.get<E.SK, E.AttributeMap>(rt, Text.compare, sk);
+  };
+
+  public func replace(rt: RangeTree, entity: E.Entity): (?E.AttributeMap, RangeTree) {
+    RBT.replace<E.SK, E.AttributeMap>(
+      rt,
+      Text.compare,
+      entity.sk,
+      entity.attributes
+    );
+  };
+
   public func put(rt: RangeTree, entity: E.Entity): RangeTree {
     RBT.put<E.SK, E.AttributeMap>(
       rt,
@@ -21,8 +34,8 @@ module {
     );
   };
 
-  public func get(rt: RangeTree, sk: E.SK): ?E.AttributeMap {
-    RBT.get<E.SK, E.AttributeMap>(rt, Text.compare, sk);
+  public func delete(rt: RangeTree, sk: E.SK): RangeTree {
+    RBT.delete<E.SK, E.AttributeMap>(rt, Text.compare, sk);
   };
 
   public func entries(rt: RangeTree): I.Iter<(E.SK, E.AttributeMap)> {
@@ -30,7 +43,7 @@ module {
   };
 
   public func equal(rt1: RangeTree, rt2: RangeTree): Bool {
-    RBT.equal<E.SK, E.AttributeMap>(rt1, rt2, Text.equal, E.attributeMapsEqual);
+    RBT.equalIgnoreDeleted<E.SK, E.AttributeMap>(rt1, rt2, Text.equal, E.attributeMapsEqual);
   };
 
   public func toText(rt: RangeTree): Text.Text {
