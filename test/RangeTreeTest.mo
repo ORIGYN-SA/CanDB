@@ -256,13 +256,66 @@ let replaceSuite = suite("replace",
   ]
 );
 
+let scanSuite = suite("scan",
+  [
+    test("if the Range Tree is empty, returns the empty list",
+      RT.scan(RT.init(), "alice", "john"),
+      M.equals(RTT.testableRangeTreeEntries([]))
+    ),
+    test("if the Range Tree contains elements, but none in the specified range, returns the empty list",
+      RT.scan(createRTAndPutSKs(["zach"]), "alice", "john"),
+      M.equals(RTT.testableRangeTreeEntries([]))
+    ),
+    test("if the Range Tree contains all elements in the specified range, returns all elements",
+      RT.scan(createRTAndPutSKs(["alice", "john", "zach"]), "aa", "zz"),
+      M.equals(RTT.testableRangeTreeEntries([
+        ("alice", mockAttributes),
+        ("john", mockAttributes),
+        ("zach", mockAttributes),
+      ]))
+    ),
+    test("if the Range Tree has some elements in the specified range, and some outside of both range bounds, just returns the elements in the range",
+      RT.scan(createRTAndPutSKs(["alice", "chris", "john", "molly", "zach"]), "b", "n"),
+      M.equals(RTT.testableRangeTreeEntries([
+        ("chris", mockAttributes),
+        ("john", mockAttributes),
+        ("molly", mockAttributes),
+      ]))
+    ),
+    test("if specified range is below elements of the Range Tree, but has some outside the range on the upper end, just returns the elements in the range",
+      RT.scan(createRTAndPutSKs(["alice", "chris", "john", "molly", "zach"]), "a", "k"),
+      M.equals(RTT.testableRangeTreeEntries([
+        ("alice", mockAttributes),
+        ("chris", mockAttributes),
+        ("john", mockAttributes),
+      ]))
+    ),
+    test("if specified range is above elements of the Range Tree, but has some outside the range on the lower end, just returns the elements in the range",
+      RT.scan(createRTAndPutSKs(["alice", "chris", "john", "molly", "zach"]), "l", "zz"),
+      M.equals(RTT.testableRangeTreeEntries([
+        ("molly", mockAttributes),
+        ("zach", mockAttributes),
+      ]))
+    ),
+    test("if specified range bounds match specific elements exactly, returns the elements in the range including the bounds",
+      RT.scan(createRTAndPutSKs(["alice", "chris", "john", "molly", "zach"]), "chris", "molly"),
+      M.equals(RTT.testableRangeTreeEntries([
+        ("chris", mockAttributes),
+        ("john", mockAttributes),
+        ("molly", mockAttributes),
+      ]))
+    ),
+  ]
+);
+
 run(suite("RangeTree", 
   [
     initSuite,
     putSuite,
     getSuite,
     deleteSuite,
-    replaceSuite
+    replaceSuite,
+    scanSuite
   ]
 ));
 

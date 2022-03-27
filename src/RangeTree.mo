@@ -3,6 +3,9 @@ import E "./Entity";
 import Text "mo:base/Text";
 import I "mo:base/Iter";
 import Int "mo:base/Int";
+import List "mo:base/List";
+import Iter "mo:base/Iter";
+import LL "./LinkedList";
 
 module {
 
@@ -38,6 +41,21 @@ module {
     RBT.delete<E.SK, E.AttributeMap>(rt, Text.compare, sk);
   };
 
+  public func scan(rt: RangeTree, skLowerBound: E.SK, skUpperBound: E.SK): [(E.SK, E.AttributeMap)] {
+    switch(Text.compare(skLowerBound, skUpperBound)) {
+      case (#greater) { [] };
+      case (#equal) { 
+        switch(get(rt, skLowerBound)) {
+          case null { [] };
+          case (?map) { [(skLowerBound, map)] }
+        }
+      };
+      case (#less) { 
+        Iter.toArray(iterScan(rt, skLowerBound, skUpperBound))
+      }
+    }
+  }; 
+
   public func entries(rt: RangeTree): I.Iter<(E.SK, E.AttributeMap)> {
     RBT.entries<E.SK, E.AttributeMap>(rt);
   };
@@ -62,6 +80,61 @@ module {
         ", l=" # toText(l) 
         # ", {sk=" # sk # ", attributeMap={" # attributeMap # "}, r=" # toText(r) # "}";
       };
+    }
+  };
+
+  type IterScanRep = List.List<{ #rt: RangeTree; #kv: (E.SK, ?E.AttributeMap)}>;
+
+  func iterScan(rt: RangeTree, lower: E.SK, upper: E.SK): I.Iter<(E.SK, E.AttributeMap)> {
+    object {
+      var trees: IterScanRep = ?(#rt(rt), null); 
+      public func next() : ?(E.SK, E.AttributeMap) {
+        switch(trees) {
+          case null { null };
+          case (?(#rt(#leaf), rts)) {
+            trees := rts;
+            next()
+          };
+          case (?(#kv((sk, attributeMap)), ts)) {
+            trees := ts;
+            switch (attributeMap) {
+              case null { next() };
+              case (?map) { ?(sk, map) }
+            }
+          };
+          case (?(#rt(#node(_, l, (sk, attributeMap), r)), rts)) {
+            trees := rtAddIfInRange(rts, l, r, (sk, attributeMap));
+            next();
+          }
+        }
+      };
+
+      func rtAddIfInRange(rts: IterScanRep, l: RangeTree, r: RangeTree, (sk: E.SK, map: ?E.AttributeMap)): IterScanRep {
+        switch(Text.compare(sk, lower), Text.compare(sk, upper)) {
+          // value is greater than lower and upper bounds, go left
+          case (#greater, #greater) {
+            ?(#rt(l), rts);
+          };
+          // value is greater than lower and equal to upper, go left then append map to tail
+          case (#greater, #equal) {
+            ?(#rt(l), ?(#kv((sk, map)), rts));
+          };
+          // value is greater than lower and less than upper, go left, append map, and go right 
+          case (#greater, #less) {
+            ?(#rt(l), ?(#kv((sk, map)), ?(#rt(r), rts)));
+          };
+          // value is equal to lower and less than upper, prepend map and go right
+          case (#equal, #less) {
+            ?(#kv((sk, map)), ?(#rt(r), rts));
+          };
+          // value is less than lower and upper bounds, go right
+          case (#less, #less) {
+            ?(#rt(r), rts);
+          };
+          // the cases where lower bound >= upper bound are covered in the main scan function
+          case _ { rts }
+        }
+      }
     }
   }
 }
