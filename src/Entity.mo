@@ -64,9 +64,19 @@ module {
   };
 
   // TODO: may delete if not used elsewhere or as external dev user helper
-  public func createEntity(pk: PK, sk: SK, attributePairs: [(AttributeKey, AttributeValue)]): Entity = {
+  public func createEntity(pk: PK, sk: SK, attributeMap: AttributeMap): Entity = {
     pk = pk;
     sk = sk;
-    attributes = createAttributeMapFromPairs(attributePairs);
+    attributes = attributeMap;
+  };
+
+  public func equal(e1: Entity, e2: Entity): Bool {
+    Text.equal(e1.pk, e2.pk) and 
+    Text.equal(e1.sk, e2.sk) and 
+    attributeMapsEqual(e1.attributes, e2.attributes);
+  };
+
+  public func toText(e: Entity): Text {
+    "{ pk=" # e.pk # "; sk=" # e.sk # "; attributes=" # attributeMapToText(e.attributes) # " }"
   };
 }

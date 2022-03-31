@@ -7,24 +7,14 @@ import RBT "mo:stable-rbtree/StableRBTree";
 import Text "mo:base/Text";
 import Iter "mo:base/Iter";
 import RTT "./RangeTreeMatchers";
+import TH "./TestHelpers";
 
 let { run;test;suite; } = S;
 
 //Setup
 
-// Test helper that creates mock attributes
-func createMockAttributes(city: Text): E.AttributeMap {
-  let attributes = [
-    ("state", #Text("OH")),
-    ("year", #Int(2020)),
-    ("city", #Text(city))
-  ];
-
-  E.createAttributeMapFromPairs(attributes);
-};
-
 // An AttributeMap value used throughout the tests
-let mockAttributes = createMockAttributes("Cleveland"); 
+let mockAttributes = TH.createMockAttributes("Cleveland"); 
 
 // Test helper that creates a RangeTree, then uses the put function to insert entities with the same PK and attributes,
 // but different sks into that RangeTree
@@ -102,13 +92,28 @@ let putSuite = suite("put",
       "replaces an entry if already exists",
       do {
         var rt = createRTAndPutSKs(["zack", "john"]);
-        rt := RT.put(rt, { pk = "app1"; sk = "zack"; attributes = createMockAttributes("Columbus")});
+        rt := RT.put(rt, { pk = "app1"; sk = "zack"; attributes = TH.createMockAttributes("Columbus")});
         Iter.toArray(RT.entries(rt));
       },
       M.equals(RTT.testableRangeTreeEntries(
         [
           ("john", mockAttributes),
-          ("zack", createMockAttributes("Columbus"))
+          ("zack", TH.createMockAttributes("Columbus"))
+        ]
+      ))
+    ),
+    test(
+      "inserts an entry correctly after it was previously deleted",
+      do {
+        var rt = createRTAndPutSKs(["zack", "john"]);
+        rt := RT.delete(rt, "zack");
+        rt := RT.put(rt, { pk = "app1"; sk = "zack"; attributes = TH.createMockAttributes("Columbus")});
+        Iter.toArray(RT.entries(rt));
+      },
+      M.equals(RTT.testableRangeTreeEntries(
+        [
+          ("john", mockAttributes),
+          ("zack", TH.createMockAttributes("Columbus"))
         ]
       ))
     ),
@@ -138,11 +143,11 @@ let getSuite = suite("get",
     test("after an entry was replaced multiple times, returns the most recent",
       do {
         var rt = createRTAndPutSKs(["john", "barry", "silvia"]);
-        rt := RT.put(rt, { pk = "app1"; sk = "barry"; attributes = createMockAttributes("Akron") });
-        rt := RT.put(rt, { pk = "app1"; sk = "barry"; attributes = createMockAttributes("Motoko!") });
+        rt := RT.put(rt, { pk = "app1"; sk = "barry"; attributes = TH.createMockAttributes("Akron") });
+        rt := RT.put(rt, { pk = "app1"; sk = "barry"; attributes = TH.createMockAttributes("Motoko!") });
         RT.get(rt, "barry"); 
       },
-      M.equals<?E.AttributeMap>(T.optional(RTT.testableAttributeMap, ?createMockAttributes("Motoko!")))
+      M.equals<?E.AttributeMap>(T.optional(RTT.testableAttributeMap, ?TH.createMockAttributes("Motoko!")))
     )
   ]
 );
@@ -234,13 +239,13 @@ let replaceSuite = suite("replace",
       "replaces an entry if already exists",
       do {
         var rt = createRTAndReplaceSKs(["zack", "john"]);
-        let (_, newRT) = RT.replace(rt, { pk = "app1"; sk = "zack"; attributes = createMockAttributes("Columbus")});
+        let (_, newRT) = RT.replace(rt, { pk = "app1"; sk = "zack"; attributes = TH.createMockAttributes("Columbus")});
         Iter.toArray(RT.entries(newRT));
       },
       M.equals(RTT.testableRangeTreeEntries(
         [
           ("john", mockAttributes),
-          ("zack", createMockAttributes("Columbus"))
+          ("zack", TH.createMockAttributes("Columbus"))
         ]
       ))
     ),
@@ -248,7 +253,7 @@ let replaceSuite = suite("replace",
       "returns the replaced map if it replaces an entry that already exists",
       do {
         var rt = createRTAndReplaceSKs(["zack", "john"]);
-        let (ov, _) = RT.replace(rt, { pk = "app1"; sk = "zack"; attributes = createMockAttributes("Columbus")});
+        let (ov, _) = RT.replace(rt, { pk = "app1"; sk = "zack"; attributes = TH.createMockAttributes("Columbus")});
         ov
       },
       M.equals<?E.AttributeMap>(T.optional(RTT.testableAttributeMap, ?mockAttributes))

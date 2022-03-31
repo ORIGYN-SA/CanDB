@@ -4,7 +4,7 @@ let upstream =
 let packages = [
   { name = "stable-hash-map"
   , repo = "https://github.com/canscale/StableHashMap"
-  , version = "v0.2.0"
+  , version = "v0.2.1"
   , dependencies = [ "base" ]
   },
   { name = "stable-rbtree"

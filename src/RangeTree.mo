@@ -41,6 +41,11 @@ module {
     RBT.delete<E.SK, E.AttributeMap>(rt, Text.compare, sk);
   };
 
+  //TODO: write unit tests for this
+  public func remove(rt: RangeTree, sk: E.SK): (?E.AttributeMap, RangeTree) {
+    RBT.remove<E.SK, E.AttributeMap>(rt, Text.compare, sk)
+  };
+
   public func scan(rt: RangeTree, skLowerBound: E.SK, skUpperBound: E.SK): [(E.SK, E.AttributeMap)] {
     switch(Text.compare(skLowerBound, skUpperBound)) {
       case (#greater) { [] };
