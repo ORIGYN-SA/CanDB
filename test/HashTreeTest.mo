@@ -376,6 +376,57 @@ let deleteSuite = suite("delete",
   ]
 );
 
+let scanSuite = suite("scan",
+  [
+    test("on empty hashTree returns []",
+      HT.scan(HT.init(), "app1", "b", "n"),
+      M.equals(T.array<E.Entity>(HTM.testableEntity, []))
+    ),
+    test("on hashTree without the provided pk returns []",
+      HT.scan(TH.createHashTreeWithPKSKMockEntries([("app2", "john")]), "app1", "b", "n"),
+      M.equals(T.array<E.Entity>(HTM.testableEntity, []))
+    ),
+    test("on hashTree with the pk, but no sk in the provided range returns []",
+      HT.scan(TH.createHashTreeWithPKSKMockEntries([("app1", "abigail")]), "app1", "b", "n"),
+      M.equals(T.array<E.Entity>(HTM.testableEntity, []))
+    ),
+    test("on hashTree with the pk, returns only entities with that pk and sk in between the sk bounds, and returns those entities in sk sorted order", 
+      HT.scan(
+        TH.createHashTreeWithPKSKMockEntries([
+          ("app1", "zach"),
+          ("app1", "matt"),
+          ("app3", "john"),
+          ("app1", "benny"),
+          ("app2", "bruce"),
+          ("app1", "nancy"),
+          ("app1", "abigail"),
+          ("app1", "gail"),
+        ]), 
+        "app1",
+        "b",
+        "n"
+      ),
+      M.equals(T.array<E.Entity>(HTM.testableEntity, [
+        {
+          pk = "app1";
+          sk = "benny";
+          attributes = mockAttributes;
+        },
+        {
+          pk = "app1";
+          sk = "gail";
+          attributes = mockAttributes;
+        },
+        {
+          pk = "app1";
+          sk = "matt";
+          attributes = mockAttributes;
+        },
+      ]))
+    )
+  ]
+);
+
 run(suite("HashTree", 
   [
     initSuite,
@@ -383,5 +434,6 @@ run(suite("HashTree",
     getSuite,
     removeSuite,
     deleteSuite,
+    scanSuite,
   ]
 ));

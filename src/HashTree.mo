@@ -30,7 +30,7 @@ module {
   };
   */
 
-  /// Gets an entity from the HashTree by pk + sk if that element exists
+  /// Gets an entity from the HashTree by pk + sk if that entity exists
   public func get(ht: HashTree, pk: E.PK, sk: E.SK): ?E.Entity {
     switch(HM.get<E.PK, RT.RangeTree>(ht, Text.equal, Text.hash, pk)) {
       case null { null };
@@ -90,7 +90,19 @@ module {
     }
   };
 
-  // TODO: Think about the case where deleting an element from a range tree leaves an empty range tree
+  /// Returns a range of entities that exactly match the provided pk, and are in between the sk lower and upper bounds (inclusive)
+  public func scan(ht: HashTree, pk: E.PK, skLowerBound: E.SK, skUpperBound: E.SK): [E.Entity] {
+    switch(HM.get<E.PK, RT.RangeTree>(ht, Text.equal, Text.hash, pk)) {
+      case null { [] };
+      case (?rt) {
+        A.map<(E.SK, E.AttributeMap), E.Entity>(RT.scan(rt, skLowerBound, skUpperBound), func((sk, attributeMap)) {
+          E.createEntity(pk, sk, attributeMap)
+        })
+      }
+    };
+  };
+
+  // TODO: Think about the case where deleting an entity from a range tree leaves an empty range tree
   // (i.e. should this RT be deleted from the al, and if the al is now empty, should the hash table be removed and the size decremented?)
   /// Return a boolean indicating if the two HashTrees are equivalent, ignoring deleted entries in the underlying RangeTree Red-Black Tree
   public func equal(ht1: HashTree, ht2: HashTree): Bool {
