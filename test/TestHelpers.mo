@@ -12,7 +12,7 @@ module {
       ("city", #Text(city))
     ];
 
-    E.createAttributeMapFromPairs(attributes);
+    E.createAttributeMapFromKVPairs(attributes);
   };
 
   // Test helper that creates a Hash Tree with the specified pk, sk, and fixed attributes
@@ -27,5 +27,5 @@ module {
       })
     };
     ht;
-  }
+  };
 }

@@ -1,3 +1,6 @@
+/// "HashTree" - the data structure underlying CanDB. A HashTree is a stable HashMap, which contains a HashTable storing a mapping of an Primary Key to RangeTree,
+/// where the RangeTree contains a mapping of an Entity's Sort Key to its Attributes
+
 import HM "mo:stable-hash-map/FunctionalStableHashMap";
 import RBT "mo:stable-rbtree/StableRBTree";
 import A "mo:base/Array";
@@ -9,9 +12,10 @@ import RT "./RangeTree";
 import AssocList "mo:base/AssocList";
 
 module {
-  public type HTKVs = AssocList.AssocList<E.PK, RT.RangeTree>;
-  public type HashTree = HM.StableHashMap<E.PK, RT.RangeTree>;
+  type HTKVs = AssocList.AssocList<E.PK, RT.RangeTree>;
 
+  /// A HashTree is a HashMap with keys being each Entity's Primary Key and Values being RangeTrees containing the Sort Key and Attributes of that particular Entity
+  public type HashTree = HM.StableHashMap<E.PK, RT.RangeTree>;
 
   /// Initializes a StableHashTree with initCapacity and table size zero
   public func init(): HashTree {
@@ -22,7 +26,7 @@ module {
     HM.initPreSized<E.PK, RT.RangeTree>(initCapacity);
   };
 
-  /* TODO: 
+  /* TODO: some type of count/size necessary for splitting a HashTree, as well as the underlying RangeTree(s)
    * If calculating from scratch, need to iterate through HashTree entries, and then each of the RTs
    * Also consider holding a count variable at the root HashTree, as well as at each of the RTs
    * Also possibly hold a count at the canister manager level.
@@ -99,7 +103,17 @@ module {
           E.createEntity(pk, sk, attributeMap)
         })
       }
-    };
+    }
+  };
+
+  /// Returns a limit specified range of entities in ascending order that exactly match the provided pk, and are in between the sk lower and upper bounds (inclusive)
+  public func scanLimit(ht: HashTree, pk: E.PK, skLowerBound: E.SK, skUpperBound: E.SK, limit: Nat): ([E.Entity], ?E.SK) {
+    scanLimitDirection(ht, pk, skLowerBound, skUpperBound, limit, #fwd);
+  };
+
+  /// Returns a limit specified range of entities in descending order that exactly match the provided pk, and are in between the sk lower and upper bounds (inclusive)
+  public func scanLimitReverse(ht: HashTree, pk: E.PK, skLowerBound: E.SK, skUpperBound: E.SK, limit: Nat): ([E.Entity], ?E.SK) {
+    scanLimitDirection(ht, pk, skLowerBound, skUpperBound, limit, #bwd);
   };
 
   // TODO: Think about the case where deleting an entity from a range tree leaves an empty range tree
@@ -221,4 +235,27 @@ module {
     table2;
   };
 
+  func scanLimitDirection(ht: HashTree, pk: E.PK, skLowerBound: E.SK, skUpperBound: E.SK, limit: Nat, dir: { #fwd; #bwd }): ([E.Entity], ?E.SK) {
+    switch((dir, HM.get<E.PK, RT.RangeTree>(ht, Text.equal, Text.hash, pk))) {
+      case (_, null) { ([], null) };
+      case (#fwd, ?rt) {
+        let (results, nextKey) = RT.scanLimit(rt, skLowerBound, skUpperBound, limit);
+        (
+          A.map<(E.SK, E.AttributeMap), E.Entity>(results, func((sk, attributeMap)) {
+            E.createEntity(pk, sk, attributeMap)
+          }),
+          nextKey
+        )
+      };
+      case (#bwd, ?rt) {
+        let (results, nextKey) = RT.scanLimitReverse(rt, skLowerBound, skUpperBound, limit);
+        (
+          A.map<(E.SK, E.AttributeMap), E.Entity>(results, func((sk, attributeMap)) {
+            E.createEntity(pk, sk, attributeMap)
+          }),
+          nextKey
+        )
+      }
+    }
+  };
 }

@@ -3,8 +3,10 @@ import T "mo:matchers/Testable";
 import HT "../src/HashTree";
 import E "../src/Entity";
 import RT "../src/RangeTree";
-import Buffer "mo:base/Buffer";
 import Array "mo:base/Array";
+import Buffer "mo:base/Buffer";
+import Option "mo:base/Option";
+import Text "mo:base/Text";
 
 /// This module contains Testable typed helpers functions for the tests in HashTreeTest.mo 
 module {
@@ -16,7 +18,7 @@ module {
 
   // Note: just for use in tests - gets all entries in a HashTree (keep this in test and not src b/c can be expensive to run)
   public func entries(ht: HT.HashTree): [E.Entity] {
-    let buffer = Buffer.Buffer<E.Entity>(1);
+    let buffer = Buffer.Buffer<E.Entity>(0);
 
     for (entry in ht.table.vals()) {
       // get all entities for a specific pk (index)
@@ -56,5 +58,25 @@ module {
       Array.equal(a1, a2, E.equal)
     };
     item = entityArray;
-  }
+  };
+
+  public func testableHashTreeScanLimitResult(scanLimitResult: ([E.Entity], ?E.SK)): T.TestableItem<([E.Entity], ?E.SK)> = {
+    display = func((entityArray: [E.Entity], nextKey: ?E.SK)): Text {
+      let nextKeyText = Option.get(nextKey, "null");
+      var output = "[";
+      for (e in entityArray.vals()) {
+        output #= E.toText(e) # ",";
+      };
+      output # "], nextKey=" # nextKeyText
+    };
+    equals = func((a1: [E.Entity], nk1: ?E.SK), (a2: [E.Entity], nk2: ?E.SK)): Bool {
+      switch(nk1, nk2) {
+        case (null, null) { Array.equal(a1, a2, E.equal) };
+        case (?k1, ?k2) { Text.equal(k1, k2) and Array.equal(a1, a2, E.equal) };
+        case _ { false }
+      }
+    };
+    item = scanLimitResult;
+  };
+
 }
