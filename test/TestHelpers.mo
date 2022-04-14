@@ -28,4 +28,35 @@ module {
     };
     ht;
   };
+
+  // Helper function for the update() function used to demonstrate how its updateFunction parameter is used
+  // increments the count attribute, or sets it to 1 if does not exist
+  public func incrementFunc(attributeMap: ?E.AttributeMap): E.AttributeMap {
+    let countKey = "count";
+    switch(attributeMap) {
+      case null { 
+        E.createAttributeMapFromKVPairs([
+          (countKey, #Int(1))
+        ])
+      };
+      case (?map) {
+        switch(E.getAttributeMapValueForKey(map, countKey)) {
+          case null {
+            E.updateAttributeMapWithKVPairs(map, [
+              (countKey, #Int(1))
+            ])
+          };
+          case (?(#Int(existingCount))) {
+            E.updateAttributeMapWithKVPairs(map, [
+              (countKey, #Int(existingCount + 1))
+            ])
+          };
+          case _ { 
+            // count is of wrong type, not updating
+            map
+          }
+        }
+      }
+    }
+  };
 }

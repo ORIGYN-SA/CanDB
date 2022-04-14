@@ -11,7 +11,7 @@ import TH "./TestHelpers";
 
 let { run;test;suite; } = S;
 
-//Setup
+// Setup
 
 // An AttributeMap value used throughout the tests
 let mockAttributes = TH.createMockAttributes("Cleveland"); 
@@ -219,6 +219,99 @@ let replaceSuite = suite("replace",
   ]
 );
 
+let updateSuite = suite("update",
+  [
+    test("creates a new entry with the correct count if the RT is empty, returning null and the new tree",
+      RT.update(RT.init(), "apples", TH.incrementFunc),
+      M.equals(
+        RTT.testableOptionalAttributeMapWithRangeTreeResult((
+          null,
+          RT.put(RT.init(), {
+            pk = "app1";
+            sk = "apples";
+            attributes = E.createAttributeMapFromKVPairs([
+              ("count", #Int(1))
+            ]);
+          })
+        ))
+      )
+    ),
+    test("creates a new entry with the correct count if the entry was previously deleted in the RT, returning null and the new tree",
+      do {
+        var rt = createRTAndPutSKs(["apples", "oranges", "muffins"]);
+        rt := RT.delete(rt, "apples");
+        RT.update(rt, "apples", TH.incrementFunc);
+      },
+      M.equals(
+        RTT.testableOptionalAttributeMapWithRangeTreeResult((
+          null,
+          RT.put(createRTAndPutSKs(["oranges", "muffins"]), {
+            pk = "app1";
+            sk = "apples";
+            attributes = E.createAttributeMapFromKVPairs([
+              ("count", #Int(1))
+            ]);
+          })
+        ))
+      )
+    ),
+    test("updates an existing entry to have a count attribute if that attribute did not exist, returning the old AttributeMap and the new tree",
+      RT.update(createRTAndPutSKs(["apples", "oranges", "muffins"]), "apples", TH.incrementFunc),
+      M.equals(
+        RTT.testableOptionalAttributeMapWithRangeTreeResult((
+          ?mockAttributes,
+          RT.put(createRTAndPutSKs(["oranges", "muffins"]), {
+            pk = "app1";
+            sk = "apples";
+            attributes = E.createAttributeMapFromKVPairs([
+              ("count", #Int(1)),
+              ("state", #Text("OH")),
+              ("year", #Int(2020)),
+              ("city", #Text("Cleveland")),
+            ]);
+          })
+        ))
+      )
+    ),
+    test("updates an existing entry to increment the count attribute if that attribute existed, returning the old AttributeMap and the new tree",
+      do {
+        var rt = createRTAndPutSKs(["apples", "oranges", "grapes", "frogs", "zuchinni"]);
+        rt := RT.put(rt, {
+          pk = "app1";
+          sk = "shwarma";
+          attributes = E.createAttributeMapFromKVPairs([
+            ("count", #Int(50)),
+            ("state", #Text("CA")),
+            ("year", #Int(2021)),
+            ("city", #Text("Oakland")),
+          ]);
+        });
+        RT.update(rt, "shwarma", TH.incrementFunc)
+      },
+      M.equals(
+        RTT.testableOptionalAttributeMapWithRangeTreeResult((
+          ?E.createAttributeMapFromKVPairs([
+            ("count", #Int(50)),
+            ("state", #Text("CA")),
+            ("year", #Int(2021)),
+            ("city", #Text("Oakland")),
+          ]),
+          RT.put(createRTAndPutSKs(["apples", "oranges", "grapes", "frogs", "zuchinni"]), {
+            pk = "app1";
+            sk = "shwarma";
+            attributes = E.createAttributeMapFromKVPairs([
+              ("count", #Int(51)),
+              ("state", #Text("CA")),
+              ("year", #Int(2021)),
+              ("city", #Text("Oakland")),
+            ]);
+          })
+        ))
+      )
+    ),
+  ]
+);
+
 let deleteSuite = suite("delete",
   [
     test("deleting from an empty tree returns an empty tree",
@@ -265,7 +358,7 @@ let removeSuite = suite("remove",
   [
     test("removing from an empty tree returns null and an empty tree",
       RT.remove(RT.init(), "john"),
-      M.equals(RTT.testableRangeTreeRemoveResult(
+      M.equals(RTT.testableOptionalAttributeMapWithRangeTreeResult(
         (null, RBT.init<E.SK, E.AttributeMap>())
       ))
     ),
@@ -274,7 +367,7 @@ let removeSuite = suite("remove",
         let rt = createRTAndPutSKs(["john"]);
         RT.remove(rt, "john");
       },
-      M.equals(RTT.testableRangeTreeRemoveResult(
+      M.equals(RTT.testableOptionalAttributeMapWithRangeTreeResult(
         (?mockAttributes, RT.init())
       ))
     ),
@@ -283,7 +376,7 @@ let removeSuite = suite("remove",
         let rt = createRTAndPutSKs(["john", "bob", "alice"]);
         RT.remove(rt, "john");
       },
-      M.equals(RTT.testableRangeTreeRemoveResult(
+      M.equals(RTT.testableOptionalAttributeMapWithRangeTreeResult(
         (?mockAttributes, createRTAndPutSKs(["alice", "bob"]))
       ))
     ),
@@ -292,7 +385,7 @@ let removeSuite = suite("remove",
         let rt = createRTAndPutSKs(["john", "bob", "alice"]);
         RT.remove(rt, "zach");
       },
-      M.equals(RTT.testableRangeTreeRemoveResult(
+      M.equals(RTT.testableOptionalAttributeMapWithRangeTreeResult(
         (null, createRTAndPutSKs(["john", "bob", "alice"]))
       ))
     ),
@@ -305,11 +398,11 @@ let scanSuite = suite("scan",
       RT.scan(RT.init(), "alice", "john"),
       M.equals(RTT.testableRangeTreeEntries([]))
     ),
-    test("if the Range Tree contains elements, but none in the specified range, returns the empty list",
+    test("if the Range Tree contains entries, but none in the specified range, returns the empty list",
       RT.scan(createRTAndPutSKs(["zach"]), "alice", "john"),
       M.equals(RTT.testableRangeTreeEntries([]))
     ),
-    test("if the Range Tree contains all elements in the specified range, returns all elements",
+    test("if the Range Tree contains all entries in the specified range, returns all entries",
       RT.scan(createRTAndPutSKs(["alice", "john", "zach"]), "aa", "zz"),
       M.equals(RTT.testableRangeTreeEntries([
         ("alice", mockAttributes),
@@ -317,7 +410,7 @@ let scanSuite = suite("scan",
         ("zach", mockAttributes),
       ]))
     ),
-    test("if the Range Tree has some elements in the specified range, and some outside of both range bounds, just returns the elements in the range",
+    test("if the Range Tree has some entries in the specified range, and some outside of both range bounds, just returns the entries in the range",
       RT.scan(createRTAndPutSKs(["alice", "chris", "john", "molly", "zach"]), "b", "n"),
       M.equals(RTT.testableRangeTreeEntries([
         ("chris", mockAttributes),
@@ -325,7 +418,7 @@ let scanSuite = suite("scan",
         ("molly", mockAttributes),
       ]))
     ),
-    test("if specified range is below elements of the Range Tree, but has some outside the range on the upper end, just returns the elements in the range",
+    test("if specified range is below entries of the Range Tree, but has some outside the range on the upper end, just returns the entries in the range",
       RT.scan(createRTAndPutSKs(["alice", "chris", "john", "molly", "zach"]), "a", "k"),
       M.equals(RTT.testableRangeTreeEntries([
         ("alice", mockAttributes),
@@ -333,14 +426,14 @@ let scanSuite = suite("scan",
         ("john", mockAttributes),
       ]))
     ),
-    test("if specified range is above elements of the Range Tree, but has some outside the range on the lower end, just returns the elements in the range",
+    test("if specified range is above entries of the Range Tree, but has some outside the range on the lower end, just returns the entries in the range",
       RT.scan(createRTAndPutSKs(["alice", "chris", "john", "molly", "zach"]), "l", "zz"),
       M.equals(RTT.testableRangeTreeEntries([
         ("molly", mockAttributes),
         ("zach", mockAttributes),
       ]))
     ),
-    test("if specified range bounds match specific elements exactly, returns the elements in the range including the bounds",
+    test("if specified range bounds match specific entries exactly, returns the entries in the range including the bounds",
       RT.scan(createRTAndPutSKs(["alice", "chris", "john", "molly", "zach"]), "chris", "molly"),
       M.equals(RTT.testableRangeTreeEntries([
         ("chris", mockAttributes),
@@ -853,6 +946,7 @@ run(suite("RangeTree",
     putSuite,
     getSuite,
     replaceSuite,
+    updateSuite,
     deleteSuite,
     removeSuite,
     scanSuite,

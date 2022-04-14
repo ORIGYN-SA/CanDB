@@ -20,12 +20,12 @@ module {
     RBT.init<E.SK, E.AttributeMap>();
   };
 
-  /// Returns an element from the RangeTree based on the sk provided that sk exists in the RangeTree with a non-null AttributeMap
+  /// Returns an entry from the RangeTree based on the sk provided that sk exists in the RangeTree with a non-null AttributeMap
   public func get(rt: RangeTree, sk: E.SK): ?E.AttributeMap {
     RBT.get<E.SK, E.AttributeMap>(rt, Text.compare, sk);
   };
 
-  /// Creates or replaces an element in the RangeTree based upon if the sk of the entity provided exists. Returns the new RangeTree
+  /// Creates or replaces an entry in the RangeTree based upon if the sk of the entity provided exists. Returns the new RangeTree
   public func put(rt: RangeTree, entity: E.Entity): RangeTree {
     RBT.put<E.SK, E.AttributeMap>(
       rt,
@@ -35,7 +35,7 @@ module {
     );
   };
 
-  /// Creates or replaces an element in the RangeTree based upon if the sk of the entity provided exists. Returns the old AttributeMap if the sk existed and the new RangeTree
+  /// Creates or replaces an entry in the RangeTree based upon if the sk of the entity provided exists. Returns the old AttributeMap if the sk existed and the new RangeTree
   public func replace(rt: RangeTree, entity: E.Entity): (?E.AttributeMap, RangeTree) {
     RBT.replace<E.SK, E.AttributeMap>(
       rt,
@@ -45,12 +45,20 @@ module {
     );
   };
 
-  /// Deletes an element from the RangeTree based upon if the sk of the entity provided exists. Returns the new RangeTree
+  /// Creates or updates an entry in the RangeTree based upon if the sk of the entity provided exists.
+  ///
+  /// The updateFunction parameter applies a function that takes null if the entry does not exist, or the current AttributeMap of an existing entry and returns 
+  /// a new AttributeMap that is used to update the attributeMap entry. 
+  public func update(rt: RangeTree, sk: E.SK, updateFunction: (?E.AttributeMap) -> E.AttributeMap): (?E.AttributeMap, RangeTree) {
+    updateRoot(rt, sk, updateFunction);
+  };
+
+  /// Deletes an entry from the RangeTree based upon if the sk of the entity provided exists. Returns the new RangeTree
   public func delete(rt: RangeTree, sk: E.SK): RangeTree {
     RBT.delete<E.SK, E.AttributeMap>(rt, Text.compare, sk);
   };
 
-  /// Deletes an element from the RangeTree based upon if the sk of the entity provided exists. Returns the deleted AttributeMap if the sk existed and the new RangeTree
+  /// Deletes an entry from the RangeTree based upon if the sk of the entity provided exists. Returns the deleted AttributeMap if the sk existed and the new RangeTree
   public func remove(rt: RangeTree, sk: E.SK): (?E.AttributeMap, RangeTree) {
     RBT.remove<E.SK, E.AttributeMap>(rt, Text.compare, sk)
   };
@@ -72,7 +80,7 @@ module {
       // return empty array if lower bound is greater than upper bound      
       // TODO: consider returning an error in this case?
       case (#greater) { ([], null) };
-      // return the single element if exists if the lower and upper bounds are equivalent
+      // return the single entry if exists if the lower and upper bounds are equivalent
       case (#equal) { 
         switch(get(rt, skLowerBound)) {
           case null { ([], null) };
@@ -104,7 +112,7 @@ module {
     }
   }; 
 
-  /// Returns an iterator of all elements in the RangeTree 
+  /// Returns an iterator of all entries in the RangeTree 
   public func entries(rt: RangeTree): I.Iter<(E.SK, E.AttributeMap)> {
     RBT.entries<E.SK, E.AttributeMap>(rt);
   };
@@ -129,8 +137,57 @@ module {
         };
         "#node(color=" # color # 
         ", l=" # toText(l) 
-        # ", {sk=" # sk # ", attributeMap={" # attributeMap # "}, r=" # toText(r) # "}";
+        # ", {sk=" # sk # ", attributeMap={" # attributeMap # "}, r=" # toText(r) # ")";
       };
+    }
+  };
+
+  func updateRoot(rt: RangeTree, sk : E.SK, updateFn: (?E.AttributeMap) -> E.AttributeMap): (?E.AttributeMap, RangeTree) {
+    switch (updateRec(rt, sk, updateFn)) {
+      case (_, #leaf) { assert false; loop { } };
+      case (vo, #node(_, l, kv, r)) { (vo, #node(#B, l, kv, r)) };
+    }
+  };
+
+  func updateRec(rt: RangeTree, sk : E.SK, updateFn: (?E.AttributeMap) -> E.AttributeMap): (?E.AttributeMap, RangeTree) {
+    switch rt {
+      case (#leaf) { (null, #node(#R, #leaf, (sk, ?updateFn(null)), #leaf)) };
+      case (#node(c, l, (k, v), r)) {
+        switch (Text.compare(sk, k)) {
+          case (#less) {
+            let (vo, l2) = updateRec(l, sk, updateFn);
+            (vo, bal<E.SK, E.AttributeMap>(c, l2, (k, v), r))
+          };
+          case (#equal) {
+            (v, #node(c, l, (k, ?updateFn(v)), r))
+          };
+          case (#greater) {
+            let (vo, r2) = updateRec(r, sk, updateFn);
+            (vo, bal<E.SK, E.AttributeMap>(c, l, (k, v), r2))
+          };
+        }
+      }
+    }
+  };
+
+  // Adapted directly from RBTree.mo in motoko-base (rebalances the current node and its children)
+  func bal<K, V>(color : RBT.Color, lt : RBT.Tree<K, V>, kv : (K, ?V), rt : RBT.Tree<K, V>) : RBT.Tree<K, V> {
+    // thank you, algebraic pattern matching!
+    // following notes from [Ravi Chugh](https://www.classes.cs.uchicago.edu/archive/2019/spring/22300-1/lectures/RedBlackTrees/index.html)
+    switch (color, lt, kv, rt) {
+      case (#B, #node(#R, #node(#R, a, k, b), v, c), z, d) {
+        #node(#R, #node(#B, a, k, b), v, #node(#B, c, z, d))
+      };
+      case (#B, #node(#R, a, k, #node(#R, b, v, c)), z, d) {
+        #node(#R, #node(#B, a, k, b), v, #node(#B, c, z, d))
+      };
+      case (#B, a, k, #node(#R, #node(#R, b, v, c), z, d)) {
+        #node(#R, #node(#B, a, k, b), v, #node(#B, c, z, d))
+      };
+      case (#B, a, k, #node(#R, b, v, #node(#R, c, z, d))) {
+        #node(#R, #node(#B, a, k, b), v, #node(#B, c, z, d))
+      };
+      case _ { #node(color, lt, kv, rt) };
     }
   };
 
@@ -223,7 +280,7 @@ module {
           switch(map) {
             // if the popped node's map is null (was deleted), skip it and traverse to the right child
             case null {};
-            // if the popped node's map is present, prepend it to the elements list and traverse to the right child
+            // if the popped node's map is present, prepend it to the entries list and traverse to the right child
             case (?attributeMap) {
               if (remaining == 1) {
                 nextKey := ?sk;

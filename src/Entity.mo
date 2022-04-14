@@ -30,8 +30,6 @@ module {
     attributes: AttributeMap;
   };
 
-  
-
   /// Creates an AttributeMap Red-Black Tree from an Array of (AttributeKey, AttributeValue)
   public func createAttributeMapFromKVPairs(attributePairs: [(AttributeKey, AttributeValue)]): AttributeMap {
     var attributeMap = RBT.init<AttributeKey, AttributeValue>();
@@ -41,6 +39,21 @@ module {
 
     attributeMap;
   };
+  
+  /// Updates an AttributeMap Red-Black Tree with an Array of (AttributeKey, AttributeValue)
+  public func updateAttributeMapWithKVPairs(attributeMap: AttributeMap, attributePairs: [(AttributeKey, AttributeValue)]): AttributeMap {
+    var updatedMap = attributeMap;
+    for ((k, v) in attributePairs.vals()) {
+      updatedMap := RBT.put<AttributeKey, AttributeValue>(attributeMap, Text.compare, k, v);
+    };
+
+    updatedMap; 
+  };
+
+  /// Gets a value from AttributeMap corresponding to a specific key
+  public func getAttributeMapValueForKey(attributeMap: AttributeMap, k: AttributeKey): ?AttributeValue {
+    RBT.get(attributeMap, Text.compare, k);
+  }; 
 
   /// Extracts all non-null kv pairs as an Array of (AttributeKey, AttributeValue) from the AttributeMap Red-Black Tree
   /// This is function to aid developers in extracting the AttributeKey and AttributeValue from the AttributeMaps for an Entity that is returned from CanDB 

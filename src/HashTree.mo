@@ -72,6 +72,33 @@ module {
     ov;
   };
 
+  /// Creates or updates an entry in the HashTree based upon if the pk + sk of the entity provided exists.
+  ///
+  /// Applies a function that takes null if the entity's pk + sk does not exist, or the current AttributeMap of an existing entity and returns 
+  /// a new AttributeMap that is used to update the attributes of the entity
+  public func update(ht: HashTree, pk: E.PK, sk: E.SK, updateFunction: (?E.AttributeMap) -> E.AttributeMap): ?E.Entity {
+    if (ht._count >= ht.table.size()) {
+      ht.table := resizeTable(ht);
+    };
+    let h = Nat32.toNat(Text.hash(pk));
+    let pos = h % ht.table.size();
+    let (kvs2, ov) = updateRec(ht.table[pos], pk, sk, updateFunction);
+    ht.table[pos] := kvs2;
+    switch(ov) {
+      case null { 
+        ht._count += 1;
+        null
+      };
+      case (?ovAttrbuteMap) {
+        ?{
+          pk = pk;
+          sk = sk;
+          attributes = ovAttrbuteMap;
+        }
+      }
+    };
+  }; 
+
   /// Deletes an entity from the HashTree by pk/sk if that entity exists. Does not return any value
   /// Mutates the underlying HashTree passed to this function
   public func delete(ht: HashTree, pk: E.PK, sk: E.SK): () {
@@ -166,6 +193,28 @@ module {
         // key does not match (collision), recurse on next element of collision list
         } else {
           let (nt, ov) = replaceRec(tl, entity);
+          (?((pk, rangeTree), nt), ov);
+        }
+      } 
+    }
+  }; 
+
+  func updateRec(al: HTKVs, pk: E.PK, sk: E.SK, updateFn: (?E.AttributeMap) -> E.AttributeMap): (HTKVs, ?E.AttributeMap) {
+    switch (al) {
+      // key does not exist at hash table or collision list position
+      case null {
+        let (ov, rt) = RT.update(RT.init(), sk, updateFn); //), null), null);
+        (?((pk, rt), null), ov);
+      };
+      // a key (matching or collision exists at hash table position)
+      case (?((existingPk, rangeTree), tl)) {
+        // key exists, replace at the RangeTree level
+        if (Text.equal(existingPk, pk)) {
+          let (ovAttrbuteMap, newRT) = RT.update(rangeTree, sk, updateFn);
+          (?((pk, newRT), tl), ovAttrbuteMap);
+        // key does not match (collision), recurse on next element of collision list
+        } else {
+          let (nt, ov) = updateRec(tl, pk, sk, updateFn);
           (?((pk, rangeTree), nt), ov);
         }
       } 

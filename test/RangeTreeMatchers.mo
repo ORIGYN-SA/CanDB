@@ -42,7 +42,7 @@ module {
     item = entries;
   };
 
-  public func testableRangeTreeRemoveResult(removeResult: (?E.AttributeMap, RT.RangeTree)): T.TestableItem<(?E.AttributeMap, RT.RangeTree)> = {
+  public func testableOptionalAttributeMapWithRangeTreeResult(optMapWithRT: (?E.AttributeMap, RT.RangeTree)): T.TestableItem<(?E.AttributeMap, RT.RangeTree)> = {
     display = func((attributeMap: ?E.AttributeMap, rt: RT.RangeTree)): Text {
       let deletedMapText = Option.getMapped(attributeMap, E.attributeMapToText, "null");
       "attributeMap=" # deletedMapText # ", rt=" # RT.toText(rt);
@@ -57,7 +57,7 @@ module {
         case _ { false }
       }
     };
-    item = removeResult;
+    item = optMapWithRT;
   };
 
   public func testableRangeTreeScanLimitResult(scanLimitResult: ([(E.SK, E.AttributeMap)], ?E.SK)): T.TestableItem<([(E.SK, E.AttributeMap)], ?E.SK)> = {

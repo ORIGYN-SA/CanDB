@@ -27,7 +27,7 @@ module {
     sk: E.SK;
   };
 
-  /// get an entity in the DB if exists
+  /// Get an entity if exists in the DB
   public func get(db: DB, options: GetOptions): ?E.Entity {
     HT.get(db, options.pk, options.sk);
   };
@@ -38,7 +38,7 @@ module {
     attributes: [(E.AttributeKey, E.AttributeValue)];
   };
 
-  /// create an entity in the DB or replace an entity if exists
+  /// Create an entity or replace an entity if exists in the DB
   public func put(db: DB, options: PutOptions): () {
     let attributeMap = E.createAttributeMapFromKVPairs(options.attributes);
     HT.put(db, E.createEntity(options.pk, options.sk, attributeMap))
@@ -46,10 +46,25 @@ module {
 
   public type ReplaceOptions = PutOptions;
 
-  /// create an entity in the DB or replace an entity if exists, returning the old entity
+  /// Create an entity or replace an entity if exists in the DB, returning the replaced entity
   public func replace(db: DB, options: ReplaceOptions): ?E.Entity {
     let attributeMap = E.createAttributeMapFromKVPairs(options.attributes);
     HT.replace(db, E.createEntity(options.pk, options.sk, attributeMap))
+  };
+
+  public type UpdateOptions = {
+    pk: E.PK;
+    sk: E.SK;
+    updateAttributeMapFunction: (?E.AttributeMap) -> E.AttributeMap;
+  };
+
+  /// Similar to replace(), but provides the ability to pass a developer defined update function
+  /// controlling how specific attributes of the entity are updated on match.
+  ///
+  /// See the create() and update() functions in examples/simpleDB/src/main.mo, and the tests in
+  /// updateSuite() in test/HashTreeTest for some examples of how to use CanDB.update()
+  public func update(db: DB, options: UpdateOptions): ?E.Entity {
+    HT.update(db, options.pk, options.sk, options.updateAttributeMapFunction)
   };
 
   public type DeleteOptions = {
@@ -57,14 +72,14 @@ module {
     sk: E.SK;
   };
 
-  /// remove an entity from the DB
+  /// Removes an entity from the DB if exists
   public func delete(db: DB, options: DeleteOptions): () {
     HT.delete(db, options.pk, options.sk);
   };
 
   public type RemoveOptions = DeleteOptions;
 
-  /// remove an entity from the DB, return that entity if exists
+  /// Remove an entity from the DB and return that entity if exists
   public func remove(db: DB, options: RemoveOptions): ?E.Entity {
     HT.remove(db, options.pk, options.sk);
   };
@@ -93,14 +108,14 @@ module {
     nextKey: ?E.SK;
   };
 
-  /// returns 0 or more items from the db matching the conditions of the ScanOptions passed
+  /// Scans the DB by primary key, a lower/upper bounded sort key range, and a desired result limit
+  /// Returns 0 or more items from the db matching the conditions of the ScanOptions passed
   public func scan(db: DB, options: ScanOptions): ScanResult {
     let (entities, nextKey) = switch(options.ascending) {
       case (?false) { HT.scanLimitReverse(db, options.pk, options.skLowerBound, options.skUpperBound, options.limit) };
       // (?true or null), default to ascending order
       case _ { HT.scanLimit(db, options.pk, options.skLowerBound, options.skUpperBound, options.limit) };
     };
-
     {
       entities = entities;
       nextKey = nextKey;

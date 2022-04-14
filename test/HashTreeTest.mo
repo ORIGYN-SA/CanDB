@@ -8,7 +8,13 @@ import HTM "./HashTreeMatchers";
 import E "../src/Entity";
 import TH "./TestHelpers";
 
+// Setup
+
 let { run;test;suite; } = S;
+
+let mockAttributes = TH.createMockAttributes("Cleveland");
+
+// Tests
 
 let initSuite = suite("init", 
   [
@@ -24,8 +30,6 @@ let initSuite = suite("init",
     )
   ]
 );
-
-let mockAttributes = TH.createMockAttributes("Cleveland");
 
 let putSuite = suite("put", 
   [
@@ -87,7 +91,7 @@ let putSuite = suite("put",
         { pk = "app4"; sk = "shawn"; attributes = mockAttributes },
       ]))
     ),
-    test("replaces an entry if it already exists at the root of an sk's RangeTree",
+    test("replaces an entity if it already exists at the root of an sk's RangeTree",
       do {
         let ht = TH.createHashTreeWithPKSKMockEntries([
           ("app1", "john"),
@@ -103,7 +107,7 @@ let putSuite = suite("put",
         { pk = "app1"; sk = "john"; attributes = mockAttributes },
       ]))
     ),
-    test("replaces an entry if it exists deep in a sk's RangeTree",
+    test("replaces an entity if it exists deep in a sk's RangeTree",
       do {
         let ht = TH.createHashTreeWithPKSKMockEntries([
           ("app1", "john"),
@@ -193,6 +197,306 @@ let getSuite = suite("get",
   ]
 );
 
+let replaceSuite = suite("replace",
+  [
+    test("inserts an item into an empty HashTree",
+      do {
+        let ht = HT.init();
+        let _ = HT.replace(ht, {
+          pk = "app1";
+          sk = "john";
+          attributes = mockAttributes; 
+        });
+        HTM.entries(ht);
+      },
+      M.equals(T.array<E.Entity>(HTM.testableEntity, [
+        { pk = "app1"; sk = "john"; attributes = mockAttributes }
+      ]))
+    ),
+    test("returns null when an item does not exist in the HashTree",
+      do {
+        let ht = HT.init();
+        T.optional(
+          HTM.testableEntity,
+          HT.replace(ht, {
+            pk = "app1";
+            sk = "john";
+            attributes = mockAttributes; 
+          })
+        )
+      },
+      M.isNull<E.Entity>()
+    ),
+    test("inserts items with different pks into a HashTree",
+      do {
+        let ht = HT.init();
+        var res = HT.replace(ht, { pk = "app1"; sk = "john"; attributes = mockAttributes; });
+        res := HT.replace(ht, { pk = "app2"; sk = "dave"; attributes = mockAttributes; });
+        res := HT.replace(ht, { pk = "app3"; sk = "shelly"; attributes = mockAttributes; });
+        HTM.entries(ht);
+      },
+      M.equals(T.array<E.Entity>(HTM.testableEntity, [
+        { pk = "app2"; sk = "dave"; attributes = mockAttributes },
+        { pk = "app3"; sk = "shelly"; attributes = mockAttributes },
+        { pk = "app1"; sk = "john"; attributes = mockAttributes },
+      ]))
+    ),
+    test("inserts items with different pks and multiple sks per pk into a HashTree, and the items entries are grouped in sk order by pk",
+      do {
+        let ht = HT.init();
+        var res = HT.replace(ht, { pk = "app1"; sk = "john"; attributes = mockAttributes; });
+        res := HT.replace(ht, { pk = "app1"; sk = "steve"; attributes = mockAttributes; });
+        res := HT.replace(ht, { pk = "app1"; sk = "clara"; attributes = mockAttributes; });
+        res := HT.replace(ht, { pk = "app2"; sk = "dave"; attributes = mockAttributes; });
+        res := HT.replace(ht, { pk = "app2"; sk = "abigail"; attributes = mockAttributes; });
+        res := HT.replace(ht, { pk = "app3"; sk = "shelly"; attributes = mockAttributes; });
+        res := HT.replace(ht, { pk = "app3"; sk = "bruce"; attributes = mockAttributes; });
+        res := HT.replace(ht, { pk = "app3"; sk = "gail"; attributes = mockAttributes; });
+        res := HT.replace(ht, { pk = "app4"; sk = "shawn"; attributes = mockAttributes; });
+        HTM.entries(ht);
+      },
+      M.equals(T.array<E.Entity>(HTM.testableEntity, [
+        { pk = "app1"; sk = "clara"; attributes = mockAttributes },
+        { pk = "app1"; sk = "john"; attributes = mockAttributes },
+        { pk = "app1"; sk = "steve"; attributes = mockAttributes },
+        { pk = "app2"; sk = "abigail"; attributes = mockAttributes },
+        { pk = "app2"; sk = "dave"; attributes = mockAttributes },
+        { pk = "app3"; sk = "bruce"; attributes = mockAttributes },
+        { pk = "app3"; sk = "gail"; attributes = mockAttributes },
+        { pk = "app3"; sk = "shelly"; attributes = mockAttributes },
+        { pk = "app4"; sk = "shawn"; attributes = mockAttributes },
+      ]))
+    ),
+    test("replaces an entity if it already exists at the root of an sk's RangeTree",
+      do {
+        let ht = TH.createHashTreeWithPKSKMockEntries([
+          ("app1", "john"),
+          ("app2", "dave"),
+          ("app3", "shelly"),
+        ]);
+        var res = HT.replace(ht, { pk = "app2"; sk = "dave"; attributes = TH.createMockAttributes("Columbus") });
+        HTM.entries(ht);
+      },
+      M.equals(T.array<E.Entity>(HTM.testableEntity, [
+        { pk = "app2"; sk = "dave"; attributes = TH.createMockAttributes("Columbus") },
+        { pk = "app3"; sk = "shelly"; attributes = mockAttributes },
+        { pk = "app1"; sk = "john"; attributes = mockAttributes },
+      ]))
+    ),
+    test("replaces an entity if it exists deep in a sk's RangeTree",
+      do {
+        let ht = TH.createHashTreeWithPKSKMockEntries([
+          ("app1", "john"),
+          ("app1", "dave"),
+          ("app1", "shelly"),
+          ("app1", "alice"),
+          ("app1", "bruce"),
+          ("app1", "abigail"),
+        ]);
+        var res = HT.replace(ht, { pk = "app1"; sk = "alice"; attributes = TH.createMockAttributes("Columbus") });
+        res := HT.replace(ht, { pk = "app1"; sk = "shelly"; attributes = TH.createMockAttributes("Akron") });
+        HTM.entries(ht);
+      },
+      M.equals(T.array<E.Entity>(HTM.testableEntity, [
+        { pk = "app1"; sk = "abigail"; attributes = mockAttributes },
+        { pk = "app1"; sk = "alice"; attributes = TH.createMockAttributes("Columbus") },
+        { pk = "app1"; sk = "bruce"; attributes = mockAttributes },
+        { pk = "app1"; sk = "dave"; attributes = mockAttributes },
+        { pk = "app1"; sk = "john"; attributes = mockAttributes },
+        { pk = "app1"; sk = "shelly"; attributes = TH.createMockAttributes("Akron") },
+      ]))
+    ),
+    test("returns the old entity if the entity existed in the HashTree and was replaced",
+      do {
+        let ht = TH.createHashTreeWithPKSKMockEntries([
+          ("app1", "john"),
+          ("app1", "dave"),
+          ("app1", "shelly"),
+          ("app1", "alice"),
+          ("app1", "bruce"),
+          ("app1", "abigail"),
+        ]);
+        HT.replace(ht, { pk = "app1"; sk = "alice"; attributes = TH.createMockAttributes("Columbus") });
+      },
+      M.equals(T.optional(
+        HTM.testableEntity,
+        ?{ pk = "app1"; sk = "alice"; attributes = TH.createMockAttributes("Cleveland") },
+      ))
+    ),
+  ]
+);
+
+let updateSuite = suite("update",
+  [
+    test("returns a null entity if the HashTree is empty",
+      do {
+        let entity = HT.update(HT.init(), "app1", "apples", TH.incrementFunc);
+        T.optional<E.Entity>(HTM.testableEntity, entity)
+      },
+      M.isNull<E.Entity>()
+    ),
+    test("creates a new entity in the HashTree with the correct count if the HashTree is empty",
+      do {
+        let ht = HT.init();
+        let _ = HT.update(ht, "app1", "apples", TH.incrementFunc);
+        HTM.entries(ht);
+      },
+      M.equals(HTM.testableHashTreeEntries([
+        { 
+          pk = "app1"; 
+          sk = "apples"; 
+          attributes = E.createAttributeMapFromKVPairs([("count", #Int(1))])
+        }
+      ]))
+    ),
+    test("returns a null entity if the HashTree does not contain the pk",
+      do {
+        let ht = TH.createHashTreeWithPKSKMockEntries([
+          ("app2", "apples"),
+          ("app2", "oranges"),
+          ("app3", "apples"),
+        ]);
+        let entity = HT.update(ht, "app1", "apples", TH.incrementFunc);
+        T.optional<E.Entity>(HTM.testableEntity, entity)
+      },
+      M.isNull<E.Entity>()
+    ),
+    test("creates a new entity in the HashTree with the correct count if the HashTree does not contain the pk",
+      do {
+        let ht = TH.createHashTreeWithPKSKMockEntries([
+          ("app2", "apples"),
+          ("app2", "oranges"),
+          ("app3", "apples"),
+        ]);
+        let _ = HT.update(ht, "app1", "apples", TH.incrementFunc);
+        HTM.entries(ht);
+      },
+      M.equals(HTM.testableHashTreeEntries([
+        { pk = "app2"; sk = "apples"; attributes = mockAttributes },
+        { pk = "app2"; sk = "oranges"; attributes = mockAttributes },
+        { pk = "app3"; sk = "apples"; attributes = mockAttributes },
+        { 
+          pk = "app1"; 
+          sk = "apples"; 
+          attributes = E.createAttributeMapFromKVPairs([("count", #Int(1))])
+        },
+      ]))
+    ),
+    test("returns a null entity if the HashTree does not contain the pk + sk",
+      do {
+        let ht = TH.createHashTreeWithPKSKMockEntries([
+          ("app1", "oranges"),
+          ("app2", "apples"),
+          ("app2", "oranges"),
+        ]);
+        let entity = HT.update(ht, "app1", "apples", TH.incrementFunc);
+        T.optional<E.Entity>(HTM.testableEntity, entity)
+      },
+      M.isNull<E.Entity>()
+    ),
+    test("creates a new entity in the HashTree with the correct count if the HashTree does not contain the pk + sk",
+      do {
+        let ht = TH.createHashTreeWithPKSKMockEntries([
+          ("app1", "oranges"),
+          ("app2", "apples"),
+          ("app2", "oranges"),
+        ]);
+        let _ = HT.update(ht, "app1", "apples", TH.incrementFunc);
+        HTM.entries(ht);
+      },
+      M.equals(HTM.testableHashTreeEntries([
+        { pk = "app2"; sk = "apples"; attributes = mockAttributes },
+        { pk = "app2"; sk = "oranges"; attributes = mockAttributes },
+        { 
+          pk = "app1"; 
+          sk = "apples"; 
+          attributes = E.createAttributeMapFromKVPairs([("count", #Int(1))])
+        },
+        { pk = "app1"; sk = "oranges"; attributes = mockAttributes },
+      ]))
+    ),
+    test("returns the old entity prior to the update if it existed the HT",
+      do {
+        let ht = TH.createHashTreeWithPKSKMockEntries([
+          ("app1", "apples"),
+          ("app1", "oranges"),
+          ("app2", "apples"),
+          ("app2", "oranges"),
+        ]);
+        HT.update(ht, "app1", "apples", TH.incrementFunc);
+      },
+      M.equals<?E.Entity>(T.optional(HTM.testableEntity, ?{
+        pk = "app1";
+        sk = "apples";
+        attributes = mockAttributes
+      }))
+    ),
+    test("correctly adds the count attribute to an entity in the HashTree if it existed in the HT but the count attribute did not yet exist",
+      do {
+        let ht = TH.createHashTreeWithPKSKMockEntries([
+          ("app1", "apples"),
+          ("app1", "oranges"),
+          ("app2", "apples"),
+          ("app2", "oranges"),
+        ]);
+        let _ = HT.update(ht, "app1", "apples", TH.incrementFunc);
+        HTM.entries(ht);
+      },
+      M.equals(HTM.testableHashTreeEntries([
+        { pk = "app2"; sk = "apples"; attributes = mockAttributes },
+        { pk = "app2"; sk = "oranges"; attributes = mockAttributes },
+        { 
+          pk = "app1"; 
+          sk = "apples"; 
+          attributes = E.createAttributeMapFromKVPairs([
+            ("state", #Text("OH")),
+            ("year", #Int(2020)),
+            ("city", #Text("Cleveland")),
+            ("count", #Int(1))
+          ])
+        },
+        { pk = "app1"; sk = "oranges"; attributes = mockAttributes },
+      ]))
+    ),
+    test("correctly updates the count attribute for an entity in the HashTree if it existed in the HT and the count attribute did exist",
+      do {
+        let ht = TH.createHashTreeWithPKSKMockEntries([
+          ("app1", "oranges"),
+          ("app2", "apples"),
+          ("app2", "oranges"),
+        ]);
+        HT.put(ht, {
+          pk = "app1";
+          sk = "apples";
+          attributes = E.createAttributeMapFromKVPairs([
+            ("state", #Text("CA")),
+            ("year", #Int(2021)),
+            ("city", #Text("Pasadena")),
+            ("count", #Int(21))
+          ]);
+        });
+        let _ = HT.update(ht, "app1", "apples", TH.incrementFunc);
+        HTM.entries(ht);
+      },
+      M.equals(HTM.testableHashTreeEntries([
+        { pk = "app2"; sk = "apples"; attributes = mockAttributes },
+        { pk = "app2"; sk = "oranges"; attributes = mockAttributes },
+        { 
+          pk = "app1"; 
+          sk = "apples"; 
+          attributes = E.createAttributeMapFromKVPairs([
+            ("state", #Text("CA")),
+            ("year", #Int(2021)),
+            ("city", #Text("Pasadena")),
+            ("count", #Int(22))
+          ])
+        },
+        { pk = "app1"; sk = "oranges"; attributes = mockAttributes },
+      ]))
+    ),
+  ]
+);
+
 let removeSuite = suite("remove",
   [
     test("remove on an empty HashTree returns null",
@@ -233,7 +537,7 @@ let removeSuite = suite("remove",
       },
       M.isNull<E.Entity>()
     ),
-    test("remove on a HashTree that contains the pk and sk returns the removed entry",
+    test("remove on a HashTree that contains the pk and sk returns the removed entity",
       do {
         let ht = TH.createHashTreeWithPKSKMockEntries([
           ("app1", "shelly"),
@@ -261,7 +565,7 @@ let removeSuite = suite("remove",
         { pk = "app1"; sk = "shelly"; attributes = mockAttributes },
       ]))
     ),
-    test("remove on a HashTree with one entry that contains the pk and sk removes that entry from the HashTree",
+    test("remove on a HashTree with one entity that contains the pk and sk removes that entity from the HashTree",
       do {
         let ht = TH.createHashTreeWithPKSKMockEntries([
           ("app1", "dave"),
@@ -271,7 +575,7 @@ let removeSuite = suite("remove",
       },
       M.equals(T.array<E.Entity>(HTM.testableEntity, []))
     ),
-    test("remove on a HashTree with multiple different pk that contains the pk and sk returns that entry",
+    test("remove on a HashTree with multiple different pk that contains the pk and sk returns that entity",
       do {
         let ht = TH.createHashTreeWithPKSKMockEntries([
           ("app1", "john"),
@@ -290,7 +594,7 @@ let removeSuite = suite("remove",
         attributes = TH.createMockAttributes("Cleveland"); 
       }))
     ),
-    test("remove on a HashTree with multiple different pk that contains the pk and sk removes that entry from the HashTree",
+    test("remove on a HashTree with multiple different pk that contains the pk and sk removes that entity from the HashTree",
       do {
         let ht = TH.createHashTreeWithPKSKMockEntries([
           ("app1", "john"),
@@ -340,7 +644,7 @@ let deleteSuite = suite("delete",
         { pk = "app1"; sk = "shelly"; attributes = mockAttributes },
       ]))
     ),
-    test("delete on a HashTree with one entry that contains the pk and sk removes that entry from the HashTree",
+    test("delete on a HashTree with one entity that contains the pk and sk removes that entity from the HashTree",
       do {
         let ht = TH.createHashTreeWithPKSKMockEntries([
           ("app1", "dave"),
@@ -350,7 +654,7 @@ let deleteSuite = suite("delete",
       },
       M.equals(T.array<E.Entity>(HTM.testableEntity,[]))
     ),
-    test("delete on a HashTree with multiple different pk that contains the pk and sk removes that entry from the HashTree",
+    test("delete on a HashTree with multiple different pk that contains the pk and sk removes that entity from the HashTree",
       do {
         let ht = TH.createHashTreeWithPKSKMockEntries([
           ("app1", "john"),
@@ -419,7 +723,6 @@ let scanLimitSuite = suite("scanLimit",
   [
     test("on empty hashTree the result returned is [], and null nextKey",
       HT.scanLimit(HT.init(), "app1", "b", "n", 5),
-      //M.equals(T.array<E.Entity>(HTM.testableEntity, ([], null)))
       M.equals(HTM.testableHashTreeScanLimitResult([], null))
     ),
     test("on hashTree without the provided pk returns [] and null nextKey",
@@ -558,7 +861,9 @@ run(suite("HashTree",
   [
     initSuite,
     putSuite,
+    replaceSuite,
     getSuite,
+    updateSuite,
     removeSuite,
     deleteSuite,
     scanSuite,

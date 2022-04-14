@@ -11,11 +11,11 @@ let { run;test;suite; } = S;
 
 // Note: These tests are a sanity check that the developer exposed functions in CanDB match the functionality in the HashTree module
 
-//Setup
+// Setup
 
 let mockAttributes = TH.createMockAttributes("Cleveland");
 
-// Start tests
+// Tests
 
 let initSuite = suite("init",
   [
@@ -371,6 +371,96 @@ let replaceSuite = suite("replace",
   ]
 );
 
+let updateSuite = suite("update",
+  [
+    test("creates a new entry in the DB with the correct count if the DB is empty just like HT.update()",
+      do {
+        let db = DB.init();
+        let _ = DB.update(db, { pk = "app1"; sk = "apples"; updateAttributeMapFunction = TH.incrementFunc; });
+        HTM.entries(db)
+      },
+      M.equals(T.array<E.Entity>(
+        HTM.testableEntity,
+        do {
+          let ht = HT.init();
+          let _ = HT.update(ht, "app1", "apples", TH.incrementFunc);
+          HTM.entries(ht)
+        },
+      ))
+    ),
+    test("creates a new entry in the DB with the correct count if the DB is doesn't contain the pk + sk just like HT.update()",
+      do {
+        let db = TH.createHashTreeWithPKSKMockEntries([
+          ("app1", "oranges"),
+          ("app1", "walnuts"),
+          ("app1", "grapes"),
+          ("app2", "apples"),
+        ]);
+        let _ = DB.update(db, { pk = "app1"; sk = "apples"; updateAttributeMapFunction = TH.incrementFunc; });
+        HTM.entries(db)
+      },
+      M.equals(T.array<E.Entity>(
+        HTM.testableEntity,
+        do {
+          let ht = TH.createHashTreeWithPKSKMockEntries([
+            ("app1", "oranges"),
+            ("app1", "walnuts"),
+            ("app1", "grapes"),
+            ("app2", "apples"),
+          ]);
+          let _ = HT.update(ht, "app1", "apples", TH.incrementFunc);
+          HTM.entries(ht)
+        },
+      ))
+    ),
+    test("applies the updateAttributeMap function to an existing entry in the DB if the DB contains the pk + sk and the attribute just like HT.update()",
+      do {
+        let db = TH.createHashTreeWithPKSKMockEntries([
+          ("app1", "oranges"),
+          ("app1", "walnuts"),
+          ("app1", "grapes"),
+          ("app2", "apples"),
+        ]);
+        DB.put(db, {
+          pk = "app1";
+          sk = "apples";
+          attributes = [
+            ("count", #Int(10)),
+            ("state", #Text("NY")),
+            ("year", #Int(2022)),
+            ("city", #Text("Albany")),
+          ];
+        });
+        let _ = DB.update(db, { pk = "app1"; sk = "apples"; updateAttributeMapFunction = TH.incrementFunc; });
+        HTM.entries(db)
+      },
+      M.equals(T.array<E.Entity>(
+        HTM.testableEntity,
+        do {
+          let ht = TH.createHashTreeWithPKSKMockEntries([
+            ("app1", "oranges"),
+            ("app1", "walnuts"),
+            ("app1", "grapes"),
+            ("app2", "apples"),
+          ]);
+          HT.put(ht, {
+            pk = "app1";
+            sk = "apples";
+            attributes = E.createAttributeMapFromKVPairs([
+              ("count", #Int(10)),
+              ("state", #Text("NY")),
+              ("year", #Int(2022)),
+              ("city", #Text("Albany")),
+            ]);
+          });
+          let _ = HT.update(ht, "app1", "apples", TH.incrementFunc);
+          HTM.entries(ht)
+        },
+      ))
+    ),
+  ]
+);
+
 let deleteSuite = suite("delete",
   [
     test("leaves an empty DB unchanged just like HT.delete()",
@@ -625,6 +715,7 @@ run(suite("CanDB",
     getSuite,
     putSuite,
     replaceSuite,
+    updateSuite,
     deleteSuite,
     removeSuite,
     scanSuite
