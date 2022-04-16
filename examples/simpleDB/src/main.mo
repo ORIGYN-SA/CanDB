@@ -17,7 +17,7 @@ import Array "mo:base/Array";
 
 actor {
 
-  // initializes an instance of CanDB
+  // initializes an instance of CanDB - yes, that's all you need!
   stable let db = CanDB.init();
 
   type ConsumableEntity = {
@@ -25,6 +25,8 @@ actor {
     sk: Entity.SK;
     attributes: [(Entity.AttributeKey, Entity.AttributeValue)];
   };
+
+  // The following are a few examples of how you might interact with CanDB in your app
 
   /// Creates an entity if that entity does not already exist. Returns the entity if creation was
   /// successful and returns null if the entity already existed

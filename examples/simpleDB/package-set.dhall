@@ -11,16 +11,6 @@ let packages = [
   , repo = "https://github.com/canscale/StableRBTree"
   , version = "v0.3.0"
   , dependencies = [ "base" ]
-  },
-  { name = "parser-combinators"
-  , repo = "https://github.com/aviate-labs/parser-combinators.mo"
-  , version = "v0.1.0"
-  , dependencies = [ "base" ]
-  },
-  { name = "json"
-  , repo = "https://github.com/aviate-labs/json.mo"
-  , version = "v0.1.1"
-  , dependencies = [ "base", "parser-combinators" ]
   }
 ]
 
