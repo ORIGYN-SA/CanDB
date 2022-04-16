@@ -329,8 +329,6 @@ actor {
       limit = request.limit;
       ascending = request.ascending;
     });
-    Debug.print("next key used is" # Option.get(request.nextKey, "null"));
-    Debug.print("next key returned is " # Option.get(request.nextKey, "null"));
     switch(entities.size()) {
       case 0 {{ transactions = []; nextKey = nextKey; }};
       case _ {{ transactions = unwrapValidUserTransactions(entities); nextKey = nextKey; }}
@@ -376,7 +374,6 @@ actor {
   };
 
   func unwrapValidTransactions(entities: [Entity.Entity]): [TransactionResult] {
-    Debug.print(debug_show(entities));
     Array.mapFilter<Entity.Entity, TransactionResult>(entities, func(e) {
       let { sk; attributes; } = e;
       let transactionId = Iter.toArray(Text.split(sk, #text("#")))[1];
@@ -389,9 +386,6 @@ actor {
           ?(#Text(senderUserId)),
           ?(#Text(receiverUserId)) 
         ) {
-          Debug.print("transactionAmount" # Int.toText(transactionAmount));
-          Debug.print("senderUserId" # senderUserId);
-          Debug.print("receiverUserId" # receiverUserId);
           ?{
             transactionId = transactionId;
             transactionAmount = transactionAmount;
