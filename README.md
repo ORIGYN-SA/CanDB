@@ -21,7 +21,7 @@ To learn how set up a canister with CanDB see the `examples` folder
 
 ## API Documentation
 
-API documentation for this library can be found at https://canscale.github.io/candb
+API documentation for this library can be found at https://candb.canscale.dev 
 
 <br/>
 
