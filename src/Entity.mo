@@ -1,3 +1,5 @@
+/// Entity - An entity is the base data record or item that is stored in CanDB
+
 import Bool "mo:base/Bool";
 import Text "mo:base/Text";
 import Int "mo:base/Int";
@@ -21,9 +23,17 @@ module {
   /// Key to Value mapping of all Entity attributes, stored in a Red-Black Tree
   public type AttributeMap = RBT.Tree<AttributeKey, AttributeValue>;
   
-  /// An Entity is the base data record, item, or row that is stored in CanDB.
+  /// An Entity is the base data item or record that is stored in CanDB.
   ///
-  /// It consists of a Primary Key (PK), a Sort Key (SK), and 0 or more attributes
+  /// An entity consists of:
+  ///
+  /// * Primary Key (PK) - A text/string primary key identifier used to partition your data.
+  ///
+  /// * Sort Key (SK) - A text/string key identifier used to sort your data. Some examples might be a timestamp, an incrementing identifier, or a numerical value (turned into a string).
+  ///
+  /// * Attributes - Additional key/value data pertaining to the entity. All attribute keys are of type text/string, and attribute values are expressed as variants, allowing for the dynamic insertion of different types of attribute values. CanDB currently only supports Text, Int, and Bool attribute values, but can easily be expanded to support more data types.
+  ///
+  /// The combination of an entity's primary key + sort key is unique in CanDB, meaning only one entity can have the exact same primary key and sort key.
   public type Entity = {
     pk: PK;
     sk: SK;
