@@ -57,7 +57,7 @@ actor {
   };
 
   // get the current balance of the user
-  public func getCurrentUserBalance(request: GetUserBalanceRequest): async GetUserBalanceResponse {
+  public query func getCurrentUserBalance(request: GetUserBalanceRequest): async GetUserBalanceResponse {
     { balance = getCurrentBalanceForUser(request.userId); }
   };
 
@@ -69,7 +69,7 @@ actor {
   };
 
   // gets the user balance history
-  public func getUserBalanceHistory(request: GetUserBalanceHistoryRequest): async GetUserBalanceHistoryResponse {
+  public query func getUserBalanceHistory(request: GetUserBalanceHistoryRequest): async GetUserBalanceHistoryResponse {
     let { transactions; nextKey } = getUserTransactionHistory(request);
     {
       balances = Array.map<UserTransactionResult, Int>(transactions, func(txn) { txn.currentBalance });
@@ -88,7 +88,7 @@ actor {
   };
   
   // get all latest transactions (regardless of the users involved)
-  public func getLatestTransactions(request: GetLatestTransactionsRequest): async GetLatestTransactionsResponse {
+  public query func getLatestTransactions(request: GetLatestTransactionsRequest): async GetLatestTransactionsResponse {
     let upperBound = Option.get(request.nextKey, "transaction#:");
     let { entities; nextKey } = CanDB.scan(db, { 
       pk = "transaction"; 
@@ -113,7 +113,7 @@ actor {
   type GetLatestUserTransactionResponse = UserTransactionHistoryResponse;
 
   // gets the latest transactions for a user
-  public func getLatestUserTransactions(request: GetLatestUserTransactionsRequest): async GetLatestTransactionsResponse {
+  public query func getLatestUserTransactions(request: GetLatestUserTransactionsRequest): async GetLatestTransactionsResponse {
     let upperBound = Option.get(request.nextKey, "transaction#:");
     let { entities; nextKey } = CanDB.scan(db, { 
       pk = "user#" # request.userId; 

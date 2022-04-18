@@ -63,7 +63,7 @@ actor {
   /// Get an entity if already exists
   /// Provides an example of how one would transform the AttributeMap returned with the Entity
   /// to a list of Attribute Key Value pairs, using the extractKVPairsFromAttributeMap function
-  public func get(options: CanDB.GetOptions): async ?ConsumableEntity {
+  public query func get(options: CanDB.GetOptions): async ?ConsumableEntity {
     switch(CanDB.get(db, options)) {
       case null { null };
       case (?entity) {
@@ -139,7 +139,7 @@ actor {
 
   /// Scans the DB by primary key, a lower/upper bounded sort key range, and a desired result limit
   /// Returns 0 or more items from the db matching the conditions of the ScanOptions passed
-  public func scan(options: CanDB.ScanOptions): async { entities: [ConsumableEntity]; nextKey: ?Entity.SK } {
+  public query func scan(options: CanDB.ScanOptions): async { entities: [ConsumableEntity]; nextKey: ?Entity.SK } {
     let { entities; nextKey } = CanDB.scan(db, options);
     {
       entities = Array.map<Entity.Entity, ConsumableEntity>(entities, func(entity): ConsumableEntity {
