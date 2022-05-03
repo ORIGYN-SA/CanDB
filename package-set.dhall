@@ -9,7 +9,12 @@ let packages = [
   },
   { name = "stable-rbtree"
   , repo = "https://github.com/canscale/StableRBTree"
-  , version = "v0.3.0"
+  , version = "v0.6.0"
+  , dependencies = [ "base" ]
+  },
+  { name = "stable-buffer"
+  , repo = "https://github.com/canscale/StableBuffer"
+  , version = "v0.2.0"
   , dependencies = [ "base" ]
   },
   { name = "parser-combinators"
@@ -21,7 +26,22 @@ let packages = [
   , repo = "https://github.com/aviate-labs/json.mo"
   , version = "v0.1.1"
   , dependencies = [ "base", "parser-combinators" ]
-  }
+  },
+  { name = "crypto"
+  , repo = "https://github.com/aviate-labs/crypto.mo"
+  , version = "v0.2.0"
+  , dependencies = [ "base" ]
+  },
+  { name = "array"
+  , repo = "https://github.com/aviate-labs/array.mo"
+  , version = "v0.2.0"
+  , dependencies = [ "base" ]
+  },
+  { name = "encoding"
+  , repo = "https://github.com/aviate-labs/encoding.mo"
+  , version = "v0.3.2"
+  , dependencies = [ "array", "base" ]
+  },
 ]
 
 in  upstream # packages

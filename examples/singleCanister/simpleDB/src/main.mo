@@ -11,7 +11,7 @@
 ///     create() 
 ///     update() 
 
-import CanDB "../../../src/CanDB";
+import CanDB "../../../src/SingleCanisterCanDB";
 import Entity "../../../src/Entity";
 import Array "mo:base/Array";
 

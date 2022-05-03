@@ -1,6 +1,6 @@
 // Simple Example for keeping track of transactions 
 
-import CanDB "../../../src/CanDB";
+import CanDB "../../../src/SingleCanisterCanDB";
 import Entity "../../../src/Entity";
 import Array "mo:base/Array";
 import Iter "mo:base/Iter";
@@ -8,6 +8,7 @@ import Int "mo:base/Int";
 import Option "mo:base/Option";
 import Text "mo:base/Text";
 import Debug "mo:base/Debug";
+
 import ULID "mo:ulid/ULID";
 import Source "mo:ulid/Source";
 import XorShift "mo:rand/XorShift";

@@ -1,7 +1,7 @@
 import M "mo:matchers/Matchers";
 import S "mo:matchers/Suite";
 import T "mo:matchers/Testable";
-import DB "../src/CanDB";
+import DB "../src/SingleCanisterCanDB";
 import HT "../src/HashTree";
 import E "../src/Entity";
 import HTM "./HashTreeMatchers";

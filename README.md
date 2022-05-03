@@ -1,4 +1,5 @@
 # CanDB
+**Note:** This library and repository is currently private in pre-release development. Any permission to use this library must be explictly given by the author of this library until a LICENSE is attached.
 
 This repository holds the code for the CanDB project. CanDB is a flexible, performant, and horizontally scalable non-relational multi-canister database built for the Internet Computer.
 
@@ -13,9 +14,9 @@ to use the vessel package manager to install the CanDB module
 
 ## Usage
 
-To learn how set up a canister with CanDB see the `examples` folder 
-* `examples/simpleDB` is a basic example how one might setup and integrate various canister APIs with CanDB.
-* `examples/transactionsApp` goes into building a transactions API. This is a more complicated example that takes one through defining user access patterns and then designing your primary and sort keys to meet those requirements.
+To learn how set up a single canister example with CanDB see the `examples/singleCanister` folder 
+* `examples/singleCanister/simpleDB` is a basic example how one might setup and integrate various canister APIs with CanDB.
+* `examples/singleCanister/transactionsApp` goes into building a transactions API. This is a more complicated example that takes one through defining user access patterns and then designing your primary and sort keys to meet those requirements.
 
 <br/>
 
@@ -51,10 +52,10 @@ API documentation for this library can be found at https://candb.canscale.dev
 
 
 ### Milestone 1 [] (In progress)
-- [] Define and implement mode of inter-canister communication between the CanDB canister manager and its storage partitions (async blocking, fire-and-forget, etc.)
+- [x] Define and implement mode of inter-canister communication between the CanDB canister manager and its storage partitions (async blocking, fire-and-forget, etc.)
 - [] Design and implement cycle management and apportioning between the CanDB canister manager and storage partition canisters. Provide API allowing the developer to query remaining cycles at the canister manager level.
-- [] Implement CanDB canister manager (not to be confused with the IC Management Canister), which controls multiple storage partitions, partition storage limits, and partition data splitting logic.
-- [] Auto-Scale design and initial implementation
+- [x] Implement library functionality for the CanDB Index Canister, which controls multiple storage partitions, partition storage limits, and partition data splitting logic.
+- [x] Auto-Scale design and initial implementation
 - [] Build and demo a simple application interacting directly with a CanDB instance canister manager which is controlling and has data stored in multiple storage partition canisters.
 
 ### Milestone 2 []
