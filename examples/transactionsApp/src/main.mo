@@ -8,6 +8,9 @@ import Int "mo:base/Int";
 import Option "mo:base/Option";
 import Text "mo:base/Text";
 import Debug "mo:base/Debug";
+import ULID "mo:ulid/ULID";
+import Source "mo:ulid/Source";
+import XorShift "mo:rand/XorShift";
 
 /// Note: This is example is not meant to be used as is in a system handling assets of value. It does not include 
 /// access control or any security measures, and is purely meant to showcase example usage of CanDB
@@ -42,9 +45,10 @@ actor {
   // Initialize CanDB
   stable let db = CanDB.init();
 
-  // Time package does not work locally, so use incrementing transactionIdCounter as a unique 
-  // identifier instead of using UUID/ULID (requires the Time package)
-  stable var transactionIdCounter = 1;
+  // generates an array of pseudo random Nat8
+  private let pseudoRandomReader = XorShift.toReader(XorShift.XorShift64(null));
+  // generates an entropy source from which ULIDs can be generated
+  private let entropySource = Source.Source(pseudoRandomReader, 0);
 
   // APIs
 
@@ -145,7 +149,8 @@ actor {
 
     let balance = Option.get(getCurrentBalanceForUser(request.userId), 0);
     let newBalance = balance + request.depositAmount; 
-    let transactionId = Int.toText(transactionIdCounter);
+    let ulid = entropySource.new();
+    let transactionId = ULID.toText(ulid);
 
     // create a new transaction
     CanDB.put(db, {
@@ -177,9 +182,6 @@ actor {
       ]
     });
 
-    // deposits count as a transaction, so increment the counter
-    transactionIdCounter += 1;
-
     ?{
       transactionId = transactionId;
       currentBalance = newBalance;
@@ -210,7 +212,8 @@ actor {
         if (senderBalance <= transactionAmount) { return null };
 
         let receiverBalance = Option.get(receiverUserBalance, 0);
-        let transactionId = Int.toText(transactionIdCounter);
+        let ulid = entropySource.new();
+        let transactionId = ULID.toText(ulid);
         let updatedSenderBalance = senderBalance - transactionAmount;
         let updatedReceiverBalance = receiverBalance + transactionAmount;
 
@@ -260,9 +263,6 @@ actor {
             ("currentBalance", #Int(updatedReceiverBalance)),
           ]
         });
-
-        // increment the transactionId
-        transactionIdCounter += 1;
 
         return ?{
           transactionId = transactionId;
