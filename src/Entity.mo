@@ -15,9 +15,9 @@ module {
   public type AttributeKey = Text;
   /// Attribute Value (Variant)
   public type AttributeValue = {
-    #Text: Text;
-    #Int: Int;
-    #Bool: Bool;
+    #text: Text;
+    #int: Int;
+    #bool: Bool;
   };
 
   /// Key to Value mapping of all Entity attributes, stored in a Red-Black Tree
@@ -87,9 +87,9 @@ module {
         };
         let value = switch(v) {
           case null { "null" };
-          case (?#Text(t)) { t };
-          case (?#Int(i)) { Int.toText(i) };
-          case (?#Bool(b)) { Bool.toText(b) };
+          case (?#text(t)) { t };
+          case (?#int(i)) { Int.toText(i) };
+          case (?#bool(b)) { Bool.toText(b) };
         };
 
         attributeMapToText(l) # "(k=" # k # ", v=" # value # "), " # attributeMapToText(r) ;
@@ -118,9 +118,9 @@ module {
 
   func attributeValuesEqual(av1: AttributeValue, av2: AttributeValue): Bool {
     switch(av1, av2) {
-      case(#Text(t1), #Text(t2)) { Text.equal(t1, t2) };
-      case(#Int(i1), #Int(i2)) { Int.equal(i1, i2) };
-      case(#Bool(b1), #Bool(b2)) { Bool.equal(b1, b2) };
+      case(#text(t1), #text(t2)) { Text.equal(t1, t2) };
+      case(#int(i1), #int(i2)) { Int.equal(i1, i2) };
+      case(#bool(b1), #bool(b2)) { Bool.equal(b1, b2) };
       case _ { false };
     }
   };

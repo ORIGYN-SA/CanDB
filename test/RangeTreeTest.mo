@@ -230,7 +230,7 @@ let updateSuite = suite("update",
             pk = "app1";
             sk = "apples";
             attributes = E.createAttributeMapFromKVPairs([
-              ("count", #Int(1))
+              ("count", #int(1))
             ]);
           })
         ))
@@ -249,7 +249,7 @@ let updateSuite = suite("update",
             pk = "app1";
             sk = "apples";
             attributes = E.createAttributeMapFromKVPairs([
-              ("count", #Int(1))
+              ("count", #int(1))
             ]);
           })
         ))
@@ -264,10 +264,10 @@ let updateSuite = suite("update",
             pk = "app1";
             sk = "apples";
             attributes = E.createAttributeMapFromKVPairs([
-              ("count", #Int(1)),
-              ("state", #Text("OH")),
-              ("year", #Int(2020)),
-              ("city", #Text("Cleveland")),
+              ("count", #int(1)),
+              ("state", #text("OH")),
+              ("year", #int(2020)),
+              ("city", #text("Cleveland")),
             ]);
           })
         ))
@@ -280,10 +280,10 @@ let updateSuite = suite("update",
           pk = "app1";
           sk = "shwarma";
           attributes = E.createAttributeMapFromKVPairs([
-            ("count", #Int(50)),
-            ("state", #Text("CA")),
-            ("year", #Int(2021)),
-            ("city", #Text("Oakland")),
+            ("count", #int(50)),
+            ("state", #text("CA")),
+            ("year", #int(2021)),
+            ("city", #text("Oakland")),
           ]);
         });
         RT.update(rt, "shwarma", TH.incrementFunc)
@@ -291,19 +291,19 @@ let updateSuite = suite("update",
       M.equals(
         RTT.testableOptionalAttributeMapWithRangeTreeResult((
           ?E.createAttributeMapFromKVPairs([
-            ("count", #Int(50)),
-            ("state", #Text("CA")),
-            ("year", #Int(2021)),
-            ("city", #Text("Oakland")),
+            ("count", #int(50)),
+            ("state", #text("CA")),
+            ("year", #int(2021)),
+            ("city", #text("Oakland")),
           ]),
           RT.put(createRTAndPutSKs(["apples", "oranges", "grapes", "frogs", "zuchinni"]), {
             pk = "app1";
             sk = "shwarma";
             attributes = E.createAttributeMapFromKVPairs([
-              ("count", #Int(51)),
-              ("state", #Text("CA")),
-              ("year", #Int(2021)),
-              ("city", #Text("Oakland")),
+              ("count", #int(51)),
+              ("state", #text("CA")),
+              ("year", #int(2021)),
+              ("city", #text("Oakland")),
             ]);
           })
         ))
