@@ -105,9 +105,9 @@ let putSuite = suite("put",
             pk = "app1";
             sk = "john";
             attributes = [
-              ("state", #Text("OH")),
-              ("year", #Int(2020)),
-              ("city", #Text("Cleveland"))
+              ("state", #text("OH")),
+              ("year", #int(2020)),
+              ("city", #text("Cleveland"))
             ];
           }
         );
@@ -143,9 +143,9 @@ let putSuite = suite("put",
             pk = "app1";
             sk = "francis";
             attributes = [
-              ("state", #Text("OH")),
-              ("year", #Int(2020)),
-              ("city", #Text("Cleveland"))
+              ("state", #text("OH")),
+              ("year", #int(2020)),
+              ("city", #text("Cleveland"))
             ];
           }
         );
@@ -186,9 +186,9 @@ let putSuite = suite("put",
             pk = "app1";
             sk = "john";
             attributes = [
-              ("state", #Text("OH")),
-              ("year", #Int(2020)),
-              ("city", #Text("Columbus"))
+              ("state", #text("OH")),
+              ("year", #int(2020)),
+              ("city", #text("Columbus"))
             ];
           }
         );
@@ -229,9 +229,9 @@ let replaceSuite = suite("replace",
             pk = "app1";
             sk = "john";
             attributes = [
-              ("state", #Text("OH")),
-              ("year", #Int(2020)),
-              ("city", #Text("Cleveland"))
+              ("state", #text("OH")),
+              ("year", #int(2020)),
+              ("city", #text("Cleveland"))
             ];
           }
         );
@@ -267,9 +267,9 @@ let replaceSuite = suite("replace",
             pk = "app1";
             sk = "john";
             attributes = [
-              ("state", #Text("OH")),
-              ("year", #Int(2020)),
-              ("city", #Text("Columbus"))
+              ("state", #text("OH")),
+              ("year", #int(2020)),
+              ("city", #text("Columbus"))
             ];
           }
         );
@@ -305,9 +305,9 @@ let replaceSuite = suite("replace",
             pk = "app1";
             sk = "john";
             attributes = [
-              ("state", #Text("OH")),
-              ("year", #Int(2020)),
-              ("city", #Text("Cleveland"))
+              ("state", #text("OH")),
+              ("year", #int(2020)),
+              ("city", #text("Cleveland"))
             ];
           }
         );
@@ -341,9 +341,9 @@ let replaceSuite = suite("replace",
             pk = "app1";
             sk = "john";
             attributes = [
-              ("state", #Text("OH")),
-              ("year", #Int(2020)),
-              ("city", #Text("Columbus"))
+              ("state", #text("OH")),
+              ("year", #int(2020)),
+              ("city", #text("Columbus"))
             ];
           }
         );
@@ -425,10 +425,10 @@ let updateSuite = suite("update",
           pk = "app1";
           sk = "apples";
           attributes = [
-            ("count", #Int(10)),
-            ("state", #Text("NY")),
-            ("year", #Int(2022)),
-            ("city", #Text("Albany")),
+            ("count", #int(10)),
+            ("state", #text("NY")),
+            ("year", #int(2022)),
+            ("city", #text("Albany")),
           ];
         });
         let _ = DB.update(db, { pk = "app1"; sk = "apples"; updateAttributeMapFunction = TH.incrementFunc; });
@@ -447,10 +447,10 @@ let updateSuite = suite("update",
             pk = "app1";
             sk = "apples";
             attributes = E.createAttributeMapFromKVPairs([
-              ("count", #Int(10)),
-              ("state", #Text("NY")),
-              ("year", #Int(2022)),
-              ("city", #Text("Albany")),
+              ("count", #int(10)),
+              ("state", #text("NY")),
+              ("year", #int(2022)),
+              ("city", #text("Albany")),
             ]);
           });
           let _ = HT.update(ht, "app1", "apples", TH.incrementFunc);

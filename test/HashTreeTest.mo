@@ -345,7 +345,7 @@ let updateSuite = suite("update",
         { 
           pk = "app1"; 
           sk = "apples"; 
-          attributes = E.createAttributeMapFromKVPairs([("count", #Int(1))])
+          attributes = E.createAttributeMapFromKVPairs([("count", #int(1))])
         }
       ]))
     ),
@@ -378,7 +378,7 @@ let updateSuite = suite("update",
         { 
           pk = "app1"; 
           sk = "apples"; 
-          attributes = E.createAttributeMapFromKVPairs([("count", #Int(1))])
+          attributes = E.createAttributeMapFromKVPairs([("count", #int(1))])
         },
       ]))
     ),
@@ -410,7 +410,7 @@ let updateSuite = suite("update",
         { 
           pk = "app1"; 
           sk = "apples"; 
-          attributes = E.createAttributeMapFromKVPairs([("count", #Int(1))])
+          attributes = E.createAttributeMapFromKVPairs([("count", #int(1))])
         },
         { pk = "app1"; sk = "oranges"; attributes = mockAttributes },
       ]))
@@ -449,10 +449,10 @@ let updateSuite = suite("update",
           pk = "app1"; 
           sk = "apples"; 
           attributes = E.createAttributeMapFromKVPairs([
-            ("state", #Text("OH")),
-            ("year", #Int(2020)),
-            ("city", #Text("Cleveland")),
-            ("count", #Int(1))
+            ("state", #text("OH")),
+            ("year", #int(2020)),
+            ("city", #text("Cleveland")),
+            ("count", #int(1))
           ])
         },
         { pk = "app1"; sk = "oranges"; attributes = mockAttributes },
@@ -469,10 +469,10 @@ let updateSuite = suite("update",
           pk = "app1";
           sk = "apples";
           attributes = E.createAttributeMapFromKVPairs([
-            ("state", #Text("CA")),
-            ("year", #Int(2021)),
-            ("city", #Text("Pasadena")),
-            ("count", #Int(21))
+            ("state", #text("CA")),
+            ("year", #int(2021)),
+            ("city", #text("Pasadena")),
+            ("count", #int(21))
           ]);
         });
         let _ = HT.update(ht, "app1", "apples", TH.incrementFunc);
@@ -485,10 +485,10 @@ let updateSuite = suite("update",
           pk = "app1"; 
           sk = "apples"; 
           attributes = E.createAttributeMapFromKVPairs([
-            ("state", #Text("CA")),
-            ("year", #Int(2021)),
-            ("city", #Text("Pasadena")),
-            ("count", #Int(22))
+            ("state", #text("CA")),
+            ("year", #int(2021)),
+            ("city", #text("Pasadena")),
+            ("count", #int(22))
           ])
         },
         { pk = "app1"; sk = "oranges"; attributes = mockAttributes },

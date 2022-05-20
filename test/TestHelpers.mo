@@ -7,9 +7,9 @@ module {
   // Test helper that creates mock attributes
   public func createMockAttributes(city: Text): E.AttributeMap {
     let attributes = [
-      ("state", #Text("OH")),
-      ("year", #Int(2020)),
-      ("city", #Text(city))
+      ("state", #text("OH")),
+      ("year", #int(2020)),
+      ("city", #text(city))
     ];
 
     E.createAttributeMapFromKVPairs(attributes);
@@ -36,19 +36,19 @@ module {
     switch(attributeMap) {
       case null { 
         E.createAttributeMapFromKVPairs([
-          (countKey, #Int(1))
+          (countKey, #int(1))
         ])
       };
       case (?map) {
         switch(E.getAttributeMapValueForKey(map, countKey)) {
           case null {
             E.updateAttributeMapWithKVPairs(map, [
-              (countKey, #Int(1))
+              (countKey, #int(1))
             ])
           };
-          case (?(#Int(existingCount))) {
+          case (?(#int(existingCount))) {
             E.updateAttributeMapWithKVPairs(map, [
-              (countKey, #Int(existingCount + 1))
+              (countKey, #int(existingCount + 1))
             ])
           };
           case _ { 

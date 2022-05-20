@@ -1,8 +1,10 @@
 /// Entity - An entity is the base data record or item that is stored in CanDB
 
+import Array "mo:base/Array";
 import Bool "mo:base/Bool";
-import Text "mo:base/Text";
+import Float "mo:base/Float";
 import Int "mo:base/Int";
+import Text "mo:base/Text";
 import Iter "mo:base/Iter";
 import RBT "mo:stable-rbtree/StableRBTree";
 
@@ -13,13 +15,33 @@ module {
   public type SK = Text;
   /// Attribute Key
   public type AttributeKey = Text;
-  /// Attribute Value (Variant)
-  public type AttributeValue = {
-    #Text: Text;
-    #Int: Int;
-    #Bool: Bool;
+
+  /// AttributeValue primitive options 
+  public type AttributeValuePrimitive = {
+    #text: Text;
+    #int: Int;
+    #bool: Bool;
+    #float: Float;
   };
 
+  /// An AttributeValue can be an array of AttributeValuePrimitive 
+  public type AttributeValueArray = {
+    #array: [AttributeValuePrimitive];
+  };
+
+  public type AttributeValueRBTreeValue = AttributeValuePrimitive or AttributeValueArray;
+
+  /// An AttributeValue can be a map (tree) with text keys and values as AttributeValuePrimitive or AttributeValueArray
+  public type AttributeValueRBTree = {
+    #tree: RBT.Tree<Text, AttributeValueRBTreeValue>;
+  };
+
+  /// Attribute Value (Variant). Represents the value of a specific Attribute in an AttributeMap. 
+  public type AttributeValue = 
+    AttributeValuePrimitive or 
+    AttributeValueArray or
+    AttributeValueRBTree;
+ 
   /// Key to Value mapping of all Entity attributes, stored in a Red-Black Tree
   public type AttributeMap = RBT.Tree<AttributeKey, AttributeValue>;
   
@@ -48,6 +70,16 @@ module {
     };
 
     attributeMap;
+  };
+
+  /// Creates an AttributeValueRBTree from an array of key value pairs
+  public func createAttributeValueRBTreeFromKVPairs(attributePairs: [(Text, AttributeValueRBTreeValue)]): RBT.Tree<Text, AttributeValueRBTreeValue> {
+    var attributeValueRBTree = RBT.init<Text, AttributeValueRBTreeValue>();
+    for ((k, v) in attributePairs.vals()) {
+      attributeValueRBTree := RBT.put<Text, AttributeValueRBTreeValue>(attributeValueRBTree, Text.compare, k, v);
+    };
+
+    attributeValueRBTree;
   };
   
   /// Updates an AttributeMap Red-Black Tree with an Array of (AttributeKey, AttributeValue)
@@ -87,9 +119,13 @@ module {
         };
         let value = switch(v) {
           case null { "null" };
-          case (?#Text(t)) { t };
-          case (?#Int(i)) { Int.toText(i) };
-          case (?#Bool(b)) { Bool.toText(b) };
+          case (?#text(t)) { t };
+          case (?#int(i)) { Int.toText(i) };
+          case (?#bool(b)) { Bool.toText(b) };
+          case (?#float(f)) { Float.toText(f) };
+          case (?#array(a)) { debug_show(a) };
+          case (?#tree(t)) { debug_show(t) };
+
         };
 
         attributeMapToText(l) # "(k=" # k # ", v=" # value # "), " # attributeMapToText(r) ;
@@ -116,11 +152,14 @@ module {
     "{ pk=" # e.pk # "; sk=" # e.sk # "; attributes=" # attributeMapToText(e.attributes) # " }"
   };
 
-  func attributeValuesEqual(av1: AttributeValue, av2: AttributeValue): Bool {
+  public func attributeValuesEqual(av1: AttributeValue, av2: AttributeValue): Bool {
     switch(av1, av2) {
-      case(#Text(t1), #Text(t2)) { Text.equal(t1, t2) };
-      case(#Int(i1), #Int(i2)) { Int.equal(i1, i2) };
-      case(#Bool(b1), #Bool(b2)) { Bool.equal(b1, b2) };
+      case(#text(t1), #text(t2)) { Text.equal(t1, t2) };
+      case(#int(i1), #int(i2)) { Int.equal(i1, i2) };
+      case(#bool(b1), #bool(b2)) { Bool.equal(b1, b2) };
+      case(#float(f1), #float(f2)) { Float.equal(f1, f2) };
+      case(#array(a1), #array(a2)) { Array.equal<AttributeValue>(a1, a2, attributeValuesEqual) };
+      case(#tree(t1), #tree(t2)) { RBT.equalIgnoreDeleted<Text, AttributeValue>(t1, t2, Text.equal, attributeValuesEqual) };
       case _ { false };
     }
   };

@@ -157,13 +157,13 @@ actor {
       pk = "transaction";
       sk = "transaction#" # transactionId;
       attributes = [
-        ("transactionType", #Text("deposit")),
-        ("transactionId", #Text(transactionId)),
-        ("transactionAmount", #Int(request.depositAmount)),
-        ("previousBalance", #Int(balance)),
-        ("currentBalance", #Int(newBalance)),
-        ("receiverUserId", #Text(request.userId)),
-        ("senderUserId", #Text("deposit")),
+        ("transactionType", #text("deposit")),
+        ("transactionId", #text(transactionId)),
+        ("transactionAmount", #int(request.depositAmount)),
+        ("previousBalance", #int(balance)),
+        ("currentBalance", #int(newBalance)),
+        ("receiverUserId", #text(request.userId)),
+        ("senderUserId", #text("deposit")),
       ]
     });
 
@@ -172,13 +172,13 @@ actor {
       pk = "user#" # request.userId;
       sk = "transaction#" # transactionId;
       attributes = [
-        ("transactionType", #Text("deposit")),
-        ("transactionId", #Text(transactionId)),
-        ("transactionAmount", #Int(request.depositAmount)),
-        ("previousBalance", #Int(balance)),
-        ("currentBalance", #Int(newBalance)),
-        ("receiverUserId", #Text(request.userId)),
-        ("senderUserId", #Text("deposit")),
+        ("transactionType", #text("deposit")),
+        ("transactionId", #text(transactionId)),
+        ("transactionAmount", #int(request.depositAmount)),
+        ("previousBalance", #int(balance)),
+        ("currentBalance", #int(newBalance)),
+        ("receiverUserId", #text(request.userId)),
+        ("senderUserId", #text("deposit")),
       ]
     });
 
@@ -226,11 +226,11 @@ actor {
           pk = "transaction";
           sk = "transaction#" # transactionId;
           attributes = [
-            ("transactionType", #Text("transfer")),
-            ("transactionId", #Text(transactionId)),
-            ("senderUserId", #Text(senderUserId)),
-            ("receiverUserId", #Text(receiverUserId)),
-            ("transactionAmount", #Int(transactionAmount)),
+            ("transactionType", #text("transfer")),
+            ("transactionId", #text(transactionId)),
+            ("senderUserId", #text(senderUserId)),
+            ("receiverUserId", #text(receiverUserId)),
+            ("transactionAmount", #int(transactionAmount)),
           ]
         });
 
@@ -239,13 +239,13 @@ actor {
           pk = "user#" # senderUserId;
           sk = "transaction#" # transactionId;
           attributes = [
-            ("transactionType", #Text("transfer")),
-            ("transactionId", #Text(transactionId)),
-            ("receiverUserId", #Text(receiverUserId)),
-            ("senderUserId", #Text(senderUserId)),
-            ("transactionAmount", #Int(Int.neq(transactionAmount))),
-            ("previousBalance", #Int(senderBalance)),
-            ("currentBalance", #Int(updatedSenderBalance)),
+            ("transactionType", #text("transfer")),
+            ("transactionId", #text(transactionId)),
+            ("receiverUserId", #text(receiverUserId)),
+            ("senderUserId", #text(senderUserId)),
+            ("transactionAmount", #int(Int.neq(transactionAmount))),
+            ("previousBalance", #int(senderBalance)),
+            ("currentBalance", #int(updatedSenderBalance)),
           ]
         });
 
@@ -254,13 +254,13 @@ actor {
           pk = "user#" # receiverUserId;
           sk = "transaction#" # transactionId;
           attributes = [
-            ("transactionType", #Text("transfer")),
-            ("transactionId", #Text(transactionId)),
-            ("receiverUserId", #Text(receiverUserId)),
-            ("senderUserId", #Text(senderUserId)),
-            ("transactionAmount", #Int(transactionAmount)),
-            ("previousBalance", #Int(receiverBalance)),
-            ("currentBalance", #Int(updatedReceiverBalance)),
+            ("transactionType", #text("transfer")),
+            ("transactionId", #text(transactionId)),
+            ("receiverUserId", #text(receiverUserId)),
+            ("senderUserId", #text(senderUserId)),
+            ("transactionAmount", #int(transactionAmount)),
+            ("previousBalance", #int(receiverBalance)),
+            ("currentBalance", #int(updatedReceiverBalance)),
           ]
         });
 
@@ -289,7 +289,7 @@ actor {
 
     let mostRecentUserTransaction = entities[0]; 
     switch(Entity.getAttributeMapValueForKey(mostRecentUserTransaction.attributes, "currentBalance")) {
-      case (?(#Int(currentBalance))) { ?currentBalance };
+      case (?(#int(currentBalance))) { ?currentBalance };
       case _ { null };
     }
   };
@@ -345,10 +345,10 @@ actor {
       let receiverUserId = Entity.getAttributeMapValueForKey(attributes, "receiverUserId");
       switch(transactionAmount, currentBalance, senderUserId, receiverUserId) {
         case (
-          ?(#Int(transactionAmount)),
-          ?(#Int(currentBalance)),
-          ?(#Text(senderUserId)),
-          ?(#Text(receiverUserId)) 
+          ?(#int(transactionAmount)),
+          ?(#int(currentBalance)),
+          ?(#text(senderUserId)),
+          ?(#text(receiverUserId)) 
         ) {
           ?{
             transactionId = transactionId;
@@ -382,9 +382,9 @@ actor {
       let receiverUserIdValue = Entity.getAttributeMapValueForKey(attributes, "receiverUserId");
       switch(transactionAmountValue, senderUserIdValue, receiverUserIdValue) {
         case (
-          ?(#Int(transactionAmount)),
-          ?(#Text(senderUserId)),
-          ?(#Text(receiverUserId)) 
+          ?(#int(transactionAmount)),
+          ?(#text(senderUserId)),
+          ?(#text(receiverUserId)) 
         ) {
           ?{
             transactionId = transactionId;
