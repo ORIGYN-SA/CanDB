@@ -65,24 +65,108 @@ let attributeValuesEqualSuite = suite("attributeValuesEqual",
       E.attributeValuesEqual(#float(3), #int(3)),
       M.equals(T.bool(false))
     ),
-    test("arrays that are equal returns true",
+    test("tuples that are equal returns true",
       E.attributeValuesEqual(
-        #array([#text("hello"), #bool(true), #int(5)]),
-        #array([#text("hello"), #bool(true), #int(5)]),
+        #tuple([#text("hello"), #bool(true), #int(5)]),
+        #tuple([#text("hello"), #bool(true), #int(5)]),
       ),
       M.equals(T.bool(true))
     ),
-    test("arrays that are not equal returns false",
+    test("tuples that are not equal returns false",
       E.attributeValuesEqual(
-        #array([#text("hello"), #bool(true), #int(5)]),
-        #array([#text("hello"), #bool(true), #int(6)]),
+        #tuple([#text("hello"), #bool(true), #int(5)]),
+        #tuple([#text("hello"), #bool(true), #int(6)]),
       ),
       M.equals(T.bool(false))
     ),
-    test("empty arrays returns true",
+    test("empty tuples returns true",
       E.attributeValuesEqual(
-        #array([]),
-        #array([]),
+        #tuple([]),
+        #tuple([]),
+      ),
+      M.equals(T.bool(true))
+    ),
+    test("arrayText that are equal returns true",
+      E.attributeValuesEqual(
+        #arrayText(["hello", "world", "!"]),
+        #arrayText(["hello", "world", "!"]),
+      ),
+      M.equals(T.bool(true))
+    ),
+    test("arrayText that are not equal returns false",
+      E.attributeValuesEqual(
+        #arrayText(["hello", "world", "!"]),
+        #arrayText(["hello", "world", "?"]),
+      ),
+      M.equals(T.bool(false))
+    ),
+    test("empty arrayText returns true",
+      E.attributeValuesEqual(
+        #arrayText([]),
+        #arrayText([]),
+      ),
+      M.equals(T.bool(true))
+    ),
+    test("arrayInt that are equal returns true",
+      E.attributeValuesEqual(
+        #arrayInt([1,3,5,2,5]),
+        #arrayInt([1,3,5,2,5]),
+      ),
+      M.equals(T.bool(true))
+    ),
+    test("arrayInt that are not equal returns false",
+      E.attributeValuesEqual(
+        #arrayInt([1,3,5,2,5]),
+        #arrayInt([1,3,10,2,5]),
+      ),
+      M.equals(T.bool(false))
+    ),
+    test("empty arrayInt returns true",
+      E.attributeValuesEqual(
+        #arrayInt([]),
+        #arrayInt([]),
+      ),
+      M.equals(T.bool(true))
+    ),
+    test("arrayBool that are equal returns true",
+      E.attributeValuesEqual(
+        #arrayBool([false, false, true]),
+        #arrayBool([false, false, true]),
+      ),
+      M.equals(T.bool(true))
+    ),
+    test("arrayBool that are not equal returns false",
+      E.attributeValuesEqual(
+        #arrayBool([false, false, true]),
+        #arrayBool([true, false, true]),
+      ),
+      M.equals(T.bool(false))
+    ),
+    test("empty arrayBool returns true",
+      E.attributeValuesEqual(
+        #arrayBool([]),
+        #arrayBool([]),
+      ),
+      M.equals(T.bool(true))
+    ),
+    test("arrayFloat that are equal returns true",
+      E.attributeValuesEqual(
+        #arrayFloat([0.2, -0.5, 0.5, 3.14159]),
+        #arrayFloat([0.2, -0.5, 0.5, 3.14159]),
+      ),
+      M.equals(T.bool(true))
+    ),
+    test("arrayFloat that are not equal returns false",
+      E.attributeValuesEqual(
+        #arrayFloat([0.2, -0.5, 0.5, 3.14159]),
+        #arrayFloat([0.2, -0.5, 0.5, -3.14159]),
+      ),
+      M.equals(T.bool(false))
+    ),
+    test("empty arrayFloat returns true",
+      E.attributeValuesEqual(
+        #arrayFloat([]),
+        #arrayFloat([]),
       ),
       M.equals(T.bool(true))
     ),
@@ -92,31 +176,111 @@ let attributeValuesEqualSuite = suite("attributeValuesEqual",
           ("tKey", #text("hello")),
           ("iKey", #int(10)),
           ("bKey", #bool(false)),
-          ("aKey", #array([#float(0.2), #float(0.4), #float(0.6)]))
+          ("tupKey", #tuple([#float(0.2), #float(0.4), #float(0.6)])),
+          ("aTextKey", #arrayText(["Hello", "world", "!"])),
+          ("aIntKey", #arrayInt([10, 5, 1])),
+          ("aBoolKey", #arrayBool([true, true, false])),
+          ("aFloatKey", #arrayFloat([-0.01, 0.01, 10.559])),
         ]);
         let t2 = E.createAttributeValueRBTreeFromKVPairs([
           ("tKey", #text("hello")),
           ("iKey", #int(10)),
           ("bKey", #bool(false)),
-          ("aKey", #array([#float(0.2), #float(0.4), #float(0.6)]))
+          ("tupKey", #tuple([#float(0.2), #float(0.4), #float(0.6)])),
+          ("aTextKey", #arrayText(["Hello", "world", "!"])),
+          ("aIntKey", #arrayInt([10, 5, 1])),
+          ("aBoolKey", #arrayBool([true, true, false])),
+          ("aFloatKey", #arrayFloat([-0.01, 0.01, 10.559])),
         ]);
         E.attributeValuesEqual(#tree(t1), #tree(t2));
       },
       M.equals(T.bool(true))
     ),
-    test("trees that are not equal in a array value returns false",
+    test("trees that are not equal in a tuple value returns false",
       do {
         let t1 = E.createAttributeValueRBTreeFromKVPairs([
           ("tKey", #text("hello")),
           ("iKey", #int(10)),
           ("bKey", #bool(false)),
-          ("aKey", #array([#float(0.2), #float(0.4), #float(0.6)]))
+          ("tupKey", #tuple([#float(0.2), #float(0.4), #float(0.6)]))
         ]);
         let t2 = E.createAttributeValueRBTreeFromKVPairs([
           ("tKey", #text("hello")),
           ("iKey", #int(10)),
           ("bKey", #bool(false)),
-          ("aKey", #array([#float(0.2), #float(0.4), #float(0.8)]))
+          ("tupKey", #tuple([#float(0.2), #float(0.4), #float(0.8)]))
+        ]);
+        E.attributeValuesEqual(#tree(t1), #tree(t2));
+      },
+      M.equals(T.bool(false))
+    ),
+    test("trees that are not equal in an arrayText value returns false",
+      do {
+        let t1 = E.createAttributeValueRBTreeFromKVPairs([
+          ("tKey", #text("hello")),
+          ("iKey", #int(10)),
+          ("bKey", #bool(false)),
+          ("aTextKey", #arrayText(["Hello", "world", "!"]))
+        ]);
+        let t2 = E.createAttributeValueRBTreeFromKVPairs([
+          ("tKey", #text("hello")),
+          ("iKey", #int(10)),
+          ("bKey", #bool(false)),
+          ("aTextKey", #arrayText(["Hello", "world", "?"]))
+        ]);
+        E.attributeValuesEqual(#tree(t1), #tree(t2));
+      },
+      M.equals(T.bool(false))
+    ),
+    test("trees that are not equal in an arrayInt value returns false",
+      do {
+        let t1 = E.createAttributeValueRBTreeFromKVPairs([
+          ("tKey", #text("hello")),
+          ("iKey", #int(10)),
+          ("bKey", #bool(false)),
+          ("aIntKey", #arrayInt([10, 5, 1]))
+        ]);
+        let t2 = E.createAttributeValueRBTreeFromKVPairs([
+          ("tKey", #text("hello")),
+          ("iKey", #int(10)),
+          ("bKey", #bool(false)),
+          ("aIntKey", #arrayInt([10, 6, 1]))
+        ]);
+        E.attributeValuesEqual(#tree(t1), #tree(t2));
+      },
+      M.equals(T.bool(false))
+    ),
+    test("trees that are not equal in an arrayBool value returns false",
+      do {
+        let t1 = E.createAttributeValueRBTreeFromKVPairs([
+          ("tKey", #text("hello")),
+          ("iKey", #int(10)),
+          ("bKey", #bool(false)),
+          ("aBoolKey", #arrayBool([true, true, false]))
+        ]);
+        let t2 = E.createAttributeValueRBTreeFromKVPairs([
+          ("tKey", #text("hello")),
+          ("iKey", #int(10)),
+          ("bKey", #bool(false)),
+          ("aBoolKey", #arrayBool([true, true, true]))
+        ]);
+        E.attributeValuesEqual(#tree(t1), #tree(t2));
+      },
+      M.equals(T.bool(false))
+    ),
+    test("trees that are not equal in an arrayFloat value returns false",
+      do {
+        let t1 = E.createAttributeValueRBTreeFromKVPairs([
+          ("tKey", #text("hello")),
+          ("iKey", #int(10)),
+          ("bKey", #bool(false)),
+          ("aFloatKey", #arrayFloat([-0.01, 0.01, 10.559])),
+        ]);
+        let t2 = E.createAttributeValueRBTreeFromKVPairs([
+          ("tKey", #text("hello")),
+          ("iKey", #int(10)),
+          ("bKey", #bool(false)),
+          ("aFloatKey", #arrayFloat([-0.01, 0.01, 10.5591])),
         ]);
         E.attributeValuesEqual(#tree(t1), #tree(t2));
       },
@@ -128,13 +292,13 @@ let attributeValuesEqualSuite = suite("attributeValuesEqual",
           ("tKey", #text("hello")),
           ("iKey", #int(10)),
           ("bKey", #bool(false)),
-          ("aKey", #array([#float(0.2), #float(0.4), #float(0.6)]))
+          ("tupKey", #tuple([#float(0.2), #float(0.4), #float(0.6)]))
         ]);
         let t2 = E.createAttributeValueRBTreeFromKVPairs([
           ("tKey", #text("hello")),
           ("iKey", #int(9)),
           ("bKey", #bool(false)),
-          ("aKey", #array([#float(0.2), #float(0.4), #float(0.6)]))
+          ("tupKey", #tuple([#float(0.2), #float(0.4), #float(0.6)]))
         ]);
         E.attributeValuesEqual(#tree(t1), #tree(t2));
       },
@@ -146,14 +310,14 @@ let attributeValuesEqualSuite = suite("attributeValuesEqual",
           ("tKey", #text("hello")),
           ("iKey", #int(10)),
           ("bKey", #bool(false)),
-          ("aKey", #array([#float(0.2), #float(0.4), #float(0.6)]))
+          ("tupKey", #tuple([#float(0.2), #float(0.4), #float(0.6)]))
         ]);
         let t2 = E.createAttributeValueRBTreeFromKVPairs([
           ("tKey", #text("hello")),
           ("iKey", #int(9)),
           ("bKey", #bool(false)),
           ("fKey", #float(3.14159)),
-          ("aKey", #array([#float(0.2), #float(0.4), #float(0.6)]))
+          ("tupKey", #tuple([#float(0.2), #float(0.4), #float(0.6)]))
         ]);
         E.attributeValuesEqual(#tree(t1), #tree(t2));
       },
@@ -165,13 +329,13 @@ let attributeValuesEqualSuite = suite("attributeValuesEqual",
           ("tKey", #text("hello")),
           ("iKey", #int(10)),
           ("bKey", #bool(false)),
-          ("aKey", #array([#float(0.2), #float(0.4), #float(0.6)]))
+          ("tupKey", #tuple([#float(0.2), #float(0.4), #float(0.6)]))
         ]);
         let t2 = E.createAttributeValueRBTreeFromKVPairs([
           ("tKey", #text("hello")),
           ("iKey", #int(9)),
           ("booleanKey", #bool(false)),
-          ("aKey", #array([#float(0.2), #float(0.4), #float(0.6)]))
+          ("tupKey", #tuple([#float(0.2), #float(0.4), #float(0.6)]))
         ]);
         E.attributeValuesEqual(#tree(t1), #tree(t2));
       },
@@ -183,14 +347,14 @@ let attributeValuesEqualSuite = suite("attributeValuesEqual",
           ("tKey", #text("hello")),
           ("iKey", #int(10)),
           ("bKey", #bool(false)),
-          ("aKey", #array([#float(0.2), #float(0.4), #float(0.6)]))
+          ("tupKey", #tuple([#float(0.2), #float(0.4), #float(0.6)]))
         ]);
         var t2 = E.createAttributeValueRBTreeFromKVPairs([
           ("tKey", #text("hello")),
           ("iKey", #int(10)),
           ("bKey", #bool(false)),
           ("fKey", #float(3.14159)),
-          ("aKey", #array([#float(0.2), #float(0.4), #float(0.6)]))
+          ("tupKey", #tuple([#float(0.2), #float(0.4), #float(0.6)]))
         ]);
         t2 := RBT.delete<Text, E.AttributeValueRBTreeValue>(t2, Text.compare, "fKey");
 

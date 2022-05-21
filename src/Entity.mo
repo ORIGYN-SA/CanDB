@@ -24,12 +24,20 @@ module {
     #float: Float;
   };
 
-  /// An AttributeValue can be an array of AttributeValuePrimitive 
-  public type AttributeValueArray = {
-    #array: [AttributeValuePrimitive];
+  /// An AttributeValue can be an array of AttributeValuePrimitive (tuple type)
+  public type AttributeValueTuple = {
+    #tuple: [AttributeValuePrimitive];
   };
 
-  public type AttributeValueRBTreeValue = AttributeValuePrimitive or AttributeValueArray;
+  /// An AttributeValue can be an array of any single one the primitive types (i.e. [Int])
+  public type AttributeValueArray = {
+    #arrayText: [Text];
+    #arrayInt: [Int];
+    #arrayBool: [Bool];
+    #arrayFloat: [Float];
+  };
+
+  public type AttributeValueRBTreeValue = AttributeValuePrimitive or AttributeValueTuple or AttributeValueArray;
 
   /// An AttributeValue can be a map (tree) with text keys and values as AttributeValuePrimitive or AttributeValueArray
   public type AttributeValueRBTree = {
@@ -39,6 +47,7 @@ module {
   /// Attribute Value (Variant). Represents the value of a specific Attribute in an AttributeMap. 
   public type AttributeValue = 
     AttributeValuePrimitive or 
+    AttributeValueTuple or
     AttributeValueArray or
     AttributeValueRBTree;
  
@@ -123,7 +132,11 @@ module {
           case (?#int(i)) { Int.toText(i) };
           case (?#bool(b)) { Bool.toText(b) };
           case (?#float(f)) { Float.toText(f) };
-          case (?#array(a)) { debug_show(a) };
+          case (?#tuple(tup)) { debug_show(tup) };
+          case (?#arrayText(at)) { debug_show(at) };
+          case (?#arrayInt(ai)) { debug_show(ai) };
+          case (?#arrayBool(ab)) { debug_show(ab) };
+          case (?#arrayFloat(af)) { debug_show(af) };
           case (?#tree(t)) { debug_show(t) };
 
         };
@@ -158,7 +171,11 @@ module {
       case(#int(i1), #int(i2)) { Int.equal(i1, i2) };
       case(#bool(b1), #bool(b2)) { Bool.equal(b1, b2) };
       case(#float(f1), #float(f2)) { Float.equal(f1, f2) };
-      case(#array(a1), #array(a2)) { Array.equal<AttributeValue>(a1, a2, attributeValuesEqual) };
+      case(#tuple(tup1), #tuple(tup2)) { Array.equal<AttributeValue>(tup1, tup2, attributeValuesEqual) };
+      case(#arrayText(a1), #arrayText(a2)) { Array.equal<Text>(a1, a2, Text.equal) };
+      case(#arrayInt(a1), #arrayInt(a2)) { Array.equal<Int>(a1, a2, Int.equal) };
+      case(#arrayBool(a1), #arrayBool(a2)) { Array.equal<Bool>(a1, a2, Bool.equal) };
+      case(#arrayFloat(a1), #arrayFloat(a2)) { Array.equal<Float>(a1, a2, Float.equal) };
       case(#tree(t1), #tree(t2)) { RBT.equalIgnoreDeleted<Text, AttributeValue>(t1, t2, Text.equal, attributeValuesEqual) };
       case _ { false };
     }
