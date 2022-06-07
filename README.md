@@ -12,11 +12,16 @@ to use the vessel package manager to install the CanDB module
 
 <br/>
 
-## Usage
+## Usage & Examples
 
-To learn how set up a single canister example with CanDB see the `examples/singleCanister` folder 
+To learn how set up a single canister example with SingleCanisterCanDB see the `examples/singleCanister` folder 
 * `examples/singleCanister/simpleDB` is a basic example how one might setup and integrate various canister APIs with CanDB.
 * `examples/singleCanister/transactionsApp` goes into building a transactions API. This is a more complicated example that takes one through defining user access patterns and then designing your primary and sort keys to meet those requirements.
+
+<br/>
+
+To learn how to set up a multi canister example with CanDB see the `examples/multiCanister` folder
+* `examples/multiCanister/simpleMultiCanister` has a basic example of how one can set up an User Actor canister with CanDB, and set up an Index Canister that provides rolling upgrades, creation of new User Canisters via the PK, and auto-scaling of existing User Canisters
 
 <br/>
 
