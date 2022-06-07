@@ -142,10 +142,18 @@ module {
     deletedStatusMap;
   };
 
+  public type UpgradePKRangeResult = {
+    upgradeCanisterResults: [(Text, InterCanisterActionResult)];
+    nextKey: ?Text;
+  };
+
   /// Upgrades up to 5 PK (potentially multiple canisters per PK) at a time in a PK range
-  public func upgradeCanistersInPKRange(canisterMap: CanisterMap.CanisterMap, lowerPK: Text, upperPK: Text, limit: Nat, wasmModule: Blob, scalingOptions: CanDB.ScalingOptions): async [(Text, InterCanisterActionResult)] {
+  public func upgradeCanistersInPKRange(canisterMap: CanisterMap.CanisterMap, lowerPK: Text, upperPK: Text, limit: Nat, wasmModule: Blob, scalingOptions: CanDB.ScalingOptions): async UpgradePKRangeResult {
     var canisterUpgradeStatusTracker = RBT.init<Text, InterCanisterActionResult>();
-    if (limit == 0 ) return [];
+    if (limit == 0 ) return {
+      upgradeCanisterResults = [];
+      nextKey = null;
+    };
     let cappedLimit = if (limit < 5) { limit } else { 5 };
 
     let { results; nextKey } = RBT.scanLimit<Text, CanisterMap.CanisterIdList>(canisterMap, Text.compare, lowerPK, upperPK, #fwd, cappedLimit);
@@ -187,7 +195,10 @@ module {
     Debug.print("canister ids=" # debug_show(successCanisterIds) # ", upgraded successfully " # debug_show(successCanisterIds.size()) # " canisters");
     Debug.print("canister ids=" # debug_show(failedCanisterIds) # ", failed to upgrade " # debug_show(failedCanisterIds.size()) # " canisters");
 
-    return upgradeCanisterResults;
+    return {
+      upgradeCanisterResults = upgradeCanisterResults;
+      nextKey = nextKey;
+    };
   };
 
   /// Upgrades all canisters for a specific PK
