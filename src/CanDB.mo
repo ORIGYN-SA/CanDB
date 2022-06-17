@@ -165,7 +165,6 @@ module {
       // that are over the limit/capacity don't spawn additional canisters
       db.scalingStatus := #started;
       await scaleCanister(db);
-      db.scalingStatus := #complete;
     }; 
   };
 
@@ -174,6 +173,7 @@ module {
     let indexCanister = actor(db.scalingOptions.autoScalingCanisterId): actor { createAdditionalCanisterForPK: shared (pk: Text) -> async Text };
     try {
       let newCanisterId = await indexCanister.createAdditionalCanisterForPK(db.pk);
+      db.scalingStatus := #complete;
       Debug.print("canister creation success for pk=" # db.pk # ", canisterId=" # newCanisterId)
     } catch (err) {
       db.scalingStatus := #not_started;
