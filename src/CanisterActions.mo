@@ -53,7 +53,19 @@ module {
   /// back to the provided canisterId principal
   public func transferCycles(transferToCanisterPrincipal: Principal): async () {
     let balance: Nat = Cycles.balance() - 100_000_000_000;
-    Cycles.add(balance);
-    await ic.deposit_cycles({ canister_id = transferToCanisterPrincipal });
+    // TODO: look into returning some type of error if this is negative?
+    if (balance > 0) { 
+      try {
+        Cycles.add(balance);
+        await ic.deposit_cycles({ canister_id = transferToCanisterPrincipal });
+      } catch(error) {
+        // usually this error is because the canister's cycles are below the freezing threshold if it does this
+        // for now just have it try one more time leaving 200_000_000 cycles - otherwise give up and continue 
+        // (cycles could be deleted - need to find a fix for this issue)
+        let try2Balance = balance + 100_000_000;
+        Cycles.add(balance);
+        await ic.deposit_cycles({ canister_id = transferToCanisterPrincipal });
+      }
+    }
   };
 }

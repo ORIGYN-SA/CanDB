@@ -40,6 +40,7 @@ module {
         settings: DefiniteCanisterSettings;
         module_hash: ?Blob;
         memory_size: Nat;
+        freezing_threshold: Nat;
         cycles: Nat;
     };
     delete_canister : { canister_id : Principal } -> async ();

@@ -38,7 +38,7 @@ module {
     pk: E.PK;
     var data: RT.RangeTree;
     var count: Nat;
-    scalingOptions: ScalingOptions;
+    var scalingOptions: ScalingOptions;
     // scalingStatus - the scaling status of the canister that this instance of DB is on
     var scalingStatus: { #not_started; #started; #complete };
   };
@@ -53,7 +53,7 @@ module {
     pk = options.pk;
     var data = RT.init();
     var count = 0;
-    scalingOptions = options.scalingOptions;
+    var scalingOptions = options.scalingOptions;
     var scalingStatus = #not_started;
   };
 

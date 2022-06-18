@@ -1,12 +1,12 @@
 import CA "mo:candb/CanisterActions";
-
 import CanDB "mo:candb/CanDB";
 import Entity "mo:candb/Entity";
+import Principal "mo:base/Principal";
 
 shared ({ caller = owner }) actor class UserCanister({
   primaryKey: Text;
   scalingOptions: CanDB.ScalingOptions;
-}) = this {
+}) {
 
   /// @required (may wrap, but must be present in some form in the canister)
   ///
