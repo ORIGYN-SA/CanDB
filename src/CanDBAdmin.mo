@@ -148,7 +148,15 @@ module {
   };
 
   /// Upgrades up to 5 PK (potentially multiple canisters per PK) at a time in a PK range
-  public func upgradeCanistersInPKRange(canisterMap: CanisterMap.CanisterMap, lowerPK: Text, upperPK: Text, limit: Nat, wasmModule: Blob, scalingOptions: CanDB.ScalingOptions): async UpgradePKRangeResult {
+  public func upgradeCanistersInPKRange({
+    canisterMap: CanisterMap.CanisterMap;
+    lowerPK: Text;
+    upperPK: Text;
+    limit: Nat;
+    wasmModule: Blob;
+    scalingOptions: CanDB.ScalingOptions;
+    owners: ?[Principal];
+  }): async UpgradePKRangeResult {
     var canisterUpgradeStatusTracker = RBT.init<Text, InterCanisterActionResult>();
     if (limit == 0 ) return {
       upgradeCanisterResults = [];
@@ -167,6 +175,7 @@ module {
             args = to_candid({
               primaryKey = pk;
               scalingOptions = scalingOptions;
+              owners = owners;
             });
           });
           Debug.print("finished upgrading canister: " # canisterId);

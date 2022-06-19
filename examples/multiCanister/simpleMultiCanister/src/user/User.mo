@@ -6,6 +6,7 @@ import Principal "mo:base/Principal";
 shared ({ caller = owner }) actor class UserCanister({
   primaryKey: Text;
   scalingOptions: CanDB.ScalingOptions;
+  owners: ?[Principal]
 }) {
 
   /// @required (may wrap, but must be present in some form in the canister)

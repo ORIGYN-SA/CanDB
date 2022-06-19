@@ -32,7 +32,8 @@ shared ({caller = owner}) actor class IndexCanister() = this {
         autoScalingCanisterId = Principal.toText(Principal.fromActor(this));
         limitType = #count;
         limit = 3;
-      }
+      };
+      owners = ?[owner, Principal.fromActor(this)];
     });
     let newUserCanisterPrincipal = Principal.fromActor(newUserCanister);
     await CA.updateCanisterSettings({
@@ -127,19 +128,27 @@ shared ({caller = owner}) actor class IndexCanister() = this {
     }
   };
 
-  /// Upgrades all user canisters with the wasm passed through the main index canister
-  public shared({ caller = caller }) func upgradeUserCanisters(wasmModule: Blob): async Admin.UpgradePKRangeResult {
-    await Admin.upgradeCanistersInPKRange(
-      pkToCanisterMap,
-      "user#", 
-      "user#:", 
-      5,
-      wasmModule,
-      {
+  /// Upgrade user canisters in a PK range, i.e. rolling upgrades (limit is fixed at upgrading the canisters of 5 PKs per call)
+  public shared({ caller = caller }) func upgradeUserCanistersInPKRange(wasmModule: Blob): async Admin.UpgradePKRangeResult {
+    if (caller != owner) { // basic authorization
+      return {
+        upgradeCanisterResults = [];
+        nextKey = null;
+      }
+    }; 
+
+    await Admin.upgradeCanistersInPKRange({
+      canisterMap = pkToCanisterMap;
+      lowerPK = "user#";
+      upperPK = "user#:";
+      limit = 5;
+      wasmModule = wasmModule;
+      scalingOptions = {
         autoScalingCanisterId = Principal.toText(Principal.fromActor(this));
         limit = 20;
         limitType = #count;
-      }
-    );
+      };
+      owners = ?[owner, Principal.fromActor(this)];
+    });
   };
 }
