@@ -2,3 +2,5 @@
 *.wasm
 docs/
 *.dfx
+**/declarations/**
+*.DS_Store
