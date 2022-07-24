@@ -1,14 +1,17 @@
 # CanDB
-**Note:** This library and repository is currently private in pre-release development. Any permission to use this library must be explictly given by the author of this library until a LICENSE is attached.
-
 This repository holds the code for the CanDB project. CanDB is a flexible, performant, and horizontally scalable non-relational multi-canister database built for the Internet Computer.
+
+<br/>
+
+**Disclaimer:** This library and repository is currently in alpha development. This means the software has not been thoroughly tested, and that the maintainer(s) are **not** guaranteeing backwards compatibility between alpha releases at this time. This software will continue to be released as "alpha" until its code and APIs are considered stable.
 
 <br/>
 
 ## Setup and Installation
 
-CanDB is currently private, but upon being made public a user will need
-to use the vessel package manager to install the CanDB module
+CanDB can be installed as a Motoko module for your project using the vessel package manager.
+
+Once vessel is installed, you can start a new project using the [candb-quickstart-template](https://github.com/canscale/candb-quickstart-template) template and CLI tool, or you can work off of one of the cloned examples in this repository located in the `examples` folder, ensuring that you pull in all of the necessary dependencies shown there for your [package-set.dhall](https://github.com/canscale/CanDB/blob/main/examples/multiCanister/simpleMultiCanister/package-set.dhall) and [vessel.dhall](https://github.com/canscale/CanDB/blob/main/examples/multiCanister/simpleMultiCanister/vessel.dhall).
 
 <br/>
 
@@ -44,40 +47,9 @@ API documentation for this library can be found at https://candb.canscale.dev
 
 ## Milestones 
 
-### 30-day sprint [x] (Complete!)
-
-- [x] Implement CanDB APIs running on the canister manager such that the stored data is persisted and stable through upgrades. APIs include:
-  - [x] Create (Capability shown through using CanDB.update()) in the simpleDB example
-  - [x] Put/Update
-  - [x] Get 
-  - [x] Delete
-  - [x] Scan (across a primary key + range/sort key combination)
-- [x] Complete unit testing for all CanDB APIs
-- [x] Implement Red-Black tree split algorithm (For halving a partition)
-
-
-### Milestone 1 [] (In progress)
-- [x] Define and implement mode of inter-canister communication between the CanDB canister manager and its storage partitions (async blocking, fire-and-forget, etc.)
-- [] Design and implement cycle management and apportioning between the CanDB canister manager and storage partition canisters. Provide API allowing the developer to query remaining cycles at the canister manager level.
-- [x] Implement library functionality for the CanDB Index Canister, which controls multiple storage partitions, partition storage limits, and partition data splitting logic.
-- [x] Auto-Scale design and initial implementation
-- [] Build and demo a simple application interacting directly with a CanDB instance canister manager which is controlling and has data stored in multiple storage partition canisters.
-
-### Milestone 2 []
-- [] Measure and fine tune performance of CanDB APIs as the number of records and storage partitions increase
-  - [] Define metrics, such as:
-    - query/update performance
-    - canister memory used
-    - request throughput (number of concurrent query/update calls CanDB is able to process in a short burst of time)
-  - [] Test CanDB against these metrics as the number of records/partition and number of partitions increase, ensuring that these metrics match the expected runtime and performance - i.e. proof of CanScale ;)
-- [] Identify and measure performance bottlenecks, and attempt to improve upon these bottlenecks if possible
-  - [] Measure inter-canister query times and look into performance tradeoffs between direct canister calls and calls proxied through the canister manager to its partitions
-  - [] Depending on the performance of the Red-Black Tree in ordering records, implement a BTree library for underlying CanDB data structures allowing primary key and range/sort key access, as well as splitting a storage partition and spinning up "n" numbers new storage partitions based on the order of the BTree.
-- [] Perform data stability testing, ensuring that data stored in CanDB is persisted through upgrades
-- [] Research and test other potential "chaos" scenarios that might affect data stability.
-- [] Add integration testing
-
+See MILESTONES.md to view milestone status (in progress vs. completed features)
 
 ## License
+CanDB is distributed under the terms of the Apache License (Version 2.0).
 
-\#TODO: Look into appropriate software license
+See LICENSE for details.
