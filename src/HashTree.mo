@@ -1,4 +1,4 @@
-/// "HashTree" - the data structure underlying CanDB. A HashTree is a stable HashMap, which contains a HashTable storing a mapping of an Primary Key to RangeTree,
+/// "HashTree" (single canister CanDB only) - the data structure underlying SingleCanisterCanDB. A HashTree is a stable HashMap, which contains a HashTable storing a mapping of an Primary Key to RangeTree,
 /// where the RangeTree contains a mapping of an Entity's Sort Key to its Attributes
 
 import HM "mo:stable-hash-map/FunctionalStableHashMap";

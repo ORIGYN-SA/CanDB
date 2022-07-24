@@ -142,13 +142,7 @@ module {
     deletedStatusMap;
   };
 
-  public type UpgradePKRangeResult = {
-    upgradeCanisterResults: [(Text, InterCanisterActionResult)];
-    nextKey: ?Text;
-  };
-
-  /// Upgrades up to 5 PK (potentially multiple canisters per PK) at a time in a PK range
-  public func upgradeCanistersInPKRange({
+  public type UpgradePKRangeOptions = {
     canisterMap: CanisterMap.CanisterMap;
     lowerPK: Text;
     upperPK: Text;
@@ -156,7 +150,23 @@ module {
     wasmModule: Blob;
     scalingOptions: CanDB.ScalingOptions;
     owners: ?[Principal];
-  }): async UpgradePKRangeResult {
+  };
+
+  public type UpgradePKRangeResult = {
+    upgradeCanisterResults: [(Text, InterCanisterActionResult)];
+    nextKey: ?Text;
+  };
+
+  /// Upgrades up to 5 PK (potentially multiple canisters per PK) at a time in a PK range
+  public func upgradeCanistersInPKRange({
+    canisterMap;
+    lowerPK;
+    upperPK;
+    limit;
+    wasmModule;
+    scalingOptions;
+    owners;
+  }: UpgradePKRangeOptions): async UpgradePKRangeResult {
     var canisterUpgradeStatusTracker = RBT.init<Text, InterCanisterActionResult>();
     if (limit == 0 ) return {
       upgradeCanisterResults = [];
