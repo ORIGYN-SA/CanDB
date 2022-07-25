@@ -4,7 +4,7 @@ import Entity "mo:candb/Entity";
 import Principal "mo:base/Principal";
 
 shared ({ caller = owner }) actor class UserCanister({
-  primaryKey: Text;
+  partitionKey: Text;
   scalingOptions: CanDB.ScalingOptions;
   owners: ?[Principal]
 }) {
@@ -13,7 +13,7 @@ shared ({ caller = owner }) actor class UserCanister({
   ///
   /// Initialize CanDB
   stable let db = CanDB.init({
-    pk = primaryKey;
+    pk = partitionKey;
     scalingOptions = scalingOptions;
   });
 

@@ -183,7 +183,7 @@ module {
             canisterId = Principal.fromText(canisterId);
             wasmModule = wasmModule;
             args = to_candid({
-              primaryKey = pk;
+              partitionKey = pk;
               scalingOptions = scalingOptions;
               owners = owners;
             });
@@ -233,7 +233,7 @@ module {
               canisterId = Principal.fromText(canisterId);
               wasmModule = wasmModule;
               args = to_candid({
-                primaryKey = pk;
+                partitionKey = pk;
                 scalingOptions = scalingOptions;
               });
             });

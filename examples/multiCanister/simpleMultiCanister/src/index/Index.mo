@@ -27,7 +27,7 @@ shared ({caller = owner}) actor class IndexCanister() = this {
     Debug.print("creating new user canister with pk=" # pk);
     Cycles.add(300_000_000_000);
     let newUserCanister = await UserCanister.UserCanister({
-      primaryKey = pk;
+      partitionKey = pk;
       scalingOptions = {
         autoScalingCanisterId = Principal.toText(Principal.fromActor(this));
         limitType = #count;
