@@ -14,7 +14,7 @@ let packages = [
   },
   { name = "candb"
   , repo = "https://github.com/canscale/candb"
-  , version = "auto-scaling-poc"
+  , version = "main"
   , dependencies = [ "base", "stable-rbtree", "stable-buffer" ]
   },
 ]
