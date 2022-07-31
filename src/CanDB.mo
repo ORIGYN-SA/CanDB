@@ -12,7 +12,8 @@ import Error "mo:base/Error";
 import Prim "mo:⛔";
 
 module {
-  public type ScalingLimitType = { #count; #heapSize };
+  /// Count
+  public type ScalingLimitType = { #count: Nat; #heapSize: Nat };
 
   let HEAP_SIZE_INSERT_LIMIT = 1_250_000_000; // 1.25GB
   let HEAP_SIZE_UPDATE_LIMIT = 1_750_000_000; // 1.75GB
@@ -20,12 +21,16 @@ module {
   /// ScalingOptions
   ///
   /// autoScalingCanisterId - The canisterId of the canister in charge of scaling (for now, the index canister)
-  /// limit - the scaling limit
-  /// limitType (may remove) - either limit the auto-scaling by the count or the heap size of the canister
+  /// sizeLimit - the auto-scaling limit for the canister: either limit the auto-scaling by the count or the heap size of the canister
+  ///
+  /// Once a canister passes the sizeLimit, it will trigger an inter-canister call from the canister storage partition to the
+  /// autoScalingCanisterId to spin up a new canister for that partition. Then the scaling status is set to #complete, meaning that 
+  /// further insertions (after messages processed in that same consensus round) are sent to the newly spun up canister. However, 
+  /// updates to **existing** entity records in a canister storage partition can still happen until the canister hits the 1.75GB 
+  /// limit, held via the HEAP_SIZE_UPDATE LIMIT constant.
   public type ScalingOptions = {
     autoScalingCanisterId: Text;
-    limit: Nat;
-    limitType: ScalingLimitType;
+    sizeLimit: ScalingLimitType;
   };
   
   /// CanDB Core 
@@ -138,20 +143,20 @@ module {
 
   // Logic for if the canister should auto-scale
   func shouldScale(db: DB): Bool {
-    switch(db.scalingOptions.limitType) {
-      case (#count) {
+    switch(db.scalingOptions.sizeLimit) {
+      case (#count(limit)) {
         (
-          db.count >= db.scalingOptions.limit // count limit passed
+          db.count >= limit // count limit passed
           or
           Prim.rts_heap_size() >= HEAP_SIZE_INSERT_LIMIT // heap insert limit passed
         ) 
         and db.scalingStatus == #not_started // and the db for this canister has not yet scaled out
       };
-      case (#heapSize) {
+      case (#heapSize(limit)) {
         (
-          Prim.rts_heap_size() >= db.scalingOptions.limit
+          Prim.rts_heap_size() >= limit // heap size limit passed
           or
-          Prim.rts_heap_size() >= HEAP_SIZE_INSERT_LIMIT
+          Prim.rts_heap_size() >= HEAP_SIZE_INSERT_LIMIT // heap insert limit passed
         )
         and db.scalingStatus == #not_started // and the db for this canister has not yet scaled out
       };

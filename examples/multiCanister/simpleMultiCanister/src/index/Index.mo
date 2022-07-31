@@ -30,8 +30,7 @@ shared ({caller = owner}) actor class IndexCanister() = this {
       partitionKey = pk;
       scalingOptions = {
         autoScalingCanisterId = Principal.toText(Principal.fromActor(this));
-        limitType = #count;
-        limit = 3;
+        sizeLimit = #count(3);
       };
       owners = ?[owner, Principal.fromActor(this)];
     });
@@ -145,8 +144,7 @@ shared ({caller = owner}) actor class IndexCanister() = this {
       wasmModule = wasmModule;
       scalingOptions = {
         autoScalingCanisterId = Principal.toText(Principal.fromActor(this));
-        limit = 20;
-        limitType = #count;
+        sizeLimit = #count(20)
       };
       owners = ?[owner, Principal.fromActor(this)];
     });

@@ -1,1 +1,1 @@
-{ dependencies = [ "base", "stable-rbtree", "stable-buffer", "candb" ], compiler = Some "0.6.28" }
+{ dependencies = [ "base", "stable-rbtree", "stable-buffer", "candb" ], compiler = Some "0.6.29" }
