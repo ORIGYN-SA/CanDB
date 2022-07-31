@@ -19,7 +19,7 @@ Once vessel is installed, you can start a new project using the [candb-quickstar
 
 To learn how set up a single canister example with SingleCanisterCanDB see the `examples/singleCanister` folder 
 * `examples/singleCanister/simpleDB` is a basic example how one might setup and integrate various canister APIs with CanDB.
-* `examples/singleCanister/transactionsApp` goes into building a transactions API. This is a more complicated example that takes one through defining user access patterns and then designing your primary and sort keys to meet those requirements.
+* `examples/singleCanister/transactionsApp` goes into building a transactions API. This is a more complicated example that takes one through defining user access patterns and then designing your partition and sort keys to meet those requirements.
 
 <br/>
 
@@ -37,11 +37,11 @@ API documentation for this library can be found at https://candb.canscale.dev
 ## About CanDB 
 
 **Entity** - An entity is the base data record or item that is stored in CanDB. It consists of:
-  - Primary Key (PK) - A text/string primary key identifier used to partition your data. 
+  - Partition Key (PK) - A text/string partition key identifier used to partition your data. 
   - Sort Key (SK) - A text/string key identifier used to sort your data. Some examples might be a timestamp, an incrementing identifier, or a numerical value (turned into a string). 
   - Attributes - Additional key/value data pertaining to the entity. All attribute keys are of type text/string, and attribute values are expressed as variants, allowing for the dynamic insertion of different types of attribute values.
   
-  - The combination of an entity's primary key + sort key is unique in CanDB, meaning only one entity can have the exact same primary key and sort key.
+  - The combination of an entity's partition key + sort key is unique in CanDB, meaning only one entity can have the exact same partition key and sort key.
 
 <br/>
 

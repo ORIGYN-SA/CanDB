@@ -137,7 +137,7 @@ actor {
     }
   };
 
-  /// Scans the DB by primary key, a lower/upper bounded sort key range, and a desired result limit
+  /// Scans the DB by partition key, a lower/upper bounded sort key range, and a desired result limit
   /// Returns 0 or more items from the db matching the conditions of the ScanOptions passed
   public query func scan(options: CanDB.ScanOptions): async { entities: [ConsumableEntity]; nextKey: ?Entity.SK } {
     let { entities; nextKey } = CanDB.scan(db, options);

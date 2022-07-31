@@ -7,7 +7,7 @@
   - [x] Put/Update
   - [x] Get 
   - [x] Delete
-  - [x] Scan (across a primary key + range/sort key combination)
+  - [x] Scan (across a partition key + range/sort key combination)
 - [x] Complete unit testing for all CanDB APIs
 - [x] Implement Red-Black tree split algorithm (For halving a partition)
 
@@ -36,7 +36,7 @@
   - [] Test CanDB against these metrics as the number of records/partition and number of partitions increase, ensuring that these metrics match the expected runtime and performance - i.e. proof of CanScale ;)
 - [] Identify and measure performance bottlenecks, and attempt to improve upon these bottlenecks if possible
   - [] Measure inter-canister query times and look into performance tradeoffs between direct canister calls and calls proxied through the canister manager to its partitions
-  - [] Depending on the performance of the Red-Black Tree in ordering records, implement a BTree library for underlying CanDB data structures allowing primary key and range/sort key access, as well as splitting a storage partition and spinning up "n" numbers new storage partitions based on the order of the BTree.
+  - [] Depending on the performance of the Red-Black Tree in ordering records, implement a BTree library for underlying CanDB data structures allowing partition key and range/sort key access, as well as splitting a storage partition and spinning up "n" numbers new storage partitions based on the order of the BTree.
 - [] Perform data stability testing, ensuring that data stored in CanDB is persisted through upgrades
 - [] Research and test other potential "chaos" scenarios that might affect data stability.
 - [] Add integration testing

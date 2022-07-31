@@ -35,7 +35,7 @@ module {
   
   /// CanDB Core 
   ///
-  /// pk - the Primary key of the CanDB instance. This also corresponds to the PK of the canister storage partition
+  /// pk - the partition key of the CanDB instance. This also corresponds to the PK of the canister storage partition
   /// data - where the data for CanDB is stored
   /// count - the size/count of elements in CanDB (can be used for limit)
   /// scalingOptions - ScalingOptions
@@ -241,7 +241,7 @@ module {
 
   /// Options passed to scan
   ///
-  /// pk - type Text: The Primary Key
+  /// pk - type Text: The Partition Key
   /// skLowerBound - The Sort Key lower bound to scan from (inclusive)
   /// skUpperBound - The Sort Key upper bound to scan from (inclusive)
   /// limit - The limit of entries to scan within the sk bounds at a given time
@@ -262,7 +262,7 @@ module {
     nextKey: ?E.SK;
   };
 
-  /// Scans the DB by primary key, a lower/upper bounded sort key range, and a desired result limit
+  /// Scans the DB by partition key, a lower/upper bounded sort key range, and a desired result limit
   /// Returns 0 or more items from the db matching the conditions of the ScanOptions passed
   public func scan(db: DB, options: ScanOptions): ScanResult {
     let (skToAttributeMaps, nextKey) = switch(options.ascending) {

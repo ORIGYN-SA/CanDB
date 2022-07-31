@@ -11,7 +11,7 @@ import Text "mo:base/Text";
 import RBT "mo:stable-rbtree/StableRBTree";
 
 module {
-  /// Primary Key
+  /// Partition Key
   public type PK = Text; 
   /// Sort Key
   public type SK = Text;
@@ -65,13 +65,13 @@ module {
   ///
   /// An entity consists of:
   ///
-  /// * Primary Key (PK) - A text/string primary key identifier used to partition your data.
+  /// * Partition Key (PK) - A text/string partition key identifier used to partition your data.
   ///
   /// * Sort Key (SK) - A text/string key identifier used to sort your data. Some examples might be a timestamp, an incrementing identifier, or a numerical value (turned into a string).
   ///
   /// * Attributes - Additional key/value data pertaining to the entity. All attribute keys are of type text/string, and attribute values are expressed as variants, allowing for the dynamic insertion of different types of attribute values.
   ///
-  /// The combination of an entity's primary key + sort key is unique in CanDB, meaning only one entity can have the exact same primary key and sort key.
+  /// The combination of an entity's partition key + sort key is unique in CanDB, meaning only one entity can have the exact same partition key and sort key.
   public type Entity = {
     pk: PK;
     sk: SK;
@@ -154,7 +154,7 @@ module {
     }
   };
 
-  /// Creates an Entity from a Primary Key, Sort Key, and Red-Black Tree mapping of Attributes
+  /// Creates an Entity from a Partition Key, Sort Key, and Red-Black Tree mapping of Attributes
   public func createEntity(pk: PK, sk: SK, attributeMap: AttributeMap): Entity = {
     pk = pk;
     sk = sk;

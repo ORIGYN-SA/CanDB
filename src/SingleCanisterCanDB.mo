@@ -87,7 +87,7 @@ module {
 
   /// Options passed to scan
   ///
-  /// pk - type Text: The Primary Key
+  /// pk - type Text: The Partition Key
   /// skLowerBound - The Sort Key lower bound to scan from (inclusive)
   /// skUpperBound - The Sort Key upper bound to scan from (inclusive)
   /// limit - The limit of entries to scan within the sk bounds at a given time
@@ -109,7 +109,7 @@ module {
     nextKey: ?E.SK;
   };
 
-  /// Scans the DB by primary key, a lower/upper bounded sort key range, and a desired result limit
+  /// Scans the DB by partition key, a lower/upper bounded sort key range, and a desired result limit
   /// Returns 0 or more items from the db matching the conditions of the ScanOptions passed
   public func scan(db: DB, options: ScanOptions): ScanResult {
     let (entities, nextKey) = switch(options.ascending) {
