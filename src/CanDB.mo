@@ -96,7 +96,7 @@ module {
   /// Create an entity or replace an entity if exists in the DB
   /// Auto scales by signaling the index canister to create a new canister with this PK if at capacity
   public func put(db: DB, options: PutOptions): async () {
-    ignore replace(db, options);
+    ignore await replace(db, options);
   };
 
   public type ReplaceOptions = PutOptions;
