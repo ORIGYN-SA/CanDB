@@ -125,7 +125,7 @@ module {
     switch(ov) {
       case null { 
         // Reject new inserts if over the max heap size insert limit limit
-        if (db.scalingStatus == #complete and Prim.rts_heap_size() > HEAP_SIZE_INSERT_LIMIT) { 
+        if (db.scalingStatus == #complete or Prim.rts_heap_size() > HEAP_SIZE_INSERT_LIMIT) { 
           Debug.trap("Canister has scaled and surpassed the heap size insert limit");
         }
       };
