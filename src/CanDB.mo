@@ -12,24 +12,29 @@ import Error "mo:base/Error";
 import Prim "mo:⛔";
 
 module {
-  /// Count
+  /// Auto-Scaling Limit Type 
+  ///
+  /// A developer can choose to auto-scale by the count of entities that have been inserted or by the canister heap size
   public type ScalingLimitType = { #count: Nat; #heapSize: Nat };
 
   let HEAP_SIZE_INSERT_LIMIT = 1_250_000_000; // 1.25GB
   let HEAP_SIZE_UPDATE_LIMIT = 1_750_000_000; // 1.75GB
 
+  /// The public API provided by the Index canister (or canister responsible for scaling) that is used to auto-scale the current canister
+  type AutoScalingCanisterSharedFunctionHook = shared (Text) -> async Text; 
+
   /// ScalingOptions
   ///
-  /// autoScalingCanisterId - The canisterId of the canister in charge of scaling (for now, the index canister)
+  /// autoScalingHook - The auto-scaling shared function in charge of scaling (located on the Index canister)
   /// sizeLimit - the auto-scaling limit for the canister: either limit the auto-scaling by the count or the heap size of the canister
   ///
   /// Once a canister passes the sizeLimit, it will trigger an inter-canister call from the canister storage partition to the
-  /// autoScalingCanisterId to spin up a new canister for that partition. Then the scaling status is set to #complete, meaning that 
+  /// autoScalingHook to spin up a new canister for that partition. Then the scaling status is set to #complete, meaning that 
   /// further insertions (after messages processed in that same consensus round) are sent to the newly spun up canister. However, 
   /// updates to **existing** entity records in a canister storage partition can still happen until the canister hits the 1.75GB 
   /// limit, held via the HEAP_SIZE_UPDATE LIMIT constant.
   public type ScalingOptions = {
-    autoScalingCanisterId: Text;
+    autoScalingHook: AutoScalingCanisterSharedFunctionHook;
     sizeLimit: ScalingLimitType;
   };
   
@@ -175,9 +180,8 @@ module {
 
   // scales out a canister
   func scaleCanister(db: DB): async () {
-    let indexCanister = actor(db.scalingOptions.autoScalingCanisterId): actor { createAdditionalCanisterForPK: shared (pk: Text) -> async Text };
     try {
-      let newCanisterId = await indexCanister.createAdditionalCanisterForPK(db.pk);
+      let newCanisterId = await db.scalingOptions.autoScalingHook(db.pk);
       db.scalingStatus := #complete;
       Debug.print("canister creation success for pk=" # db.pk # ", canisterId=" # newCanisterId)
     } catch (err) {

@@ -30,7 +30,7 @@ shared ({caller = owner}) actor class IndexCanister() = this {
     let newUserCanister = await UserCanister.UserCanister({
       partitionKey = pk;
       scalingOptions = {
-        autoScalingCanisterId = Principal.toText(Principal.fromActor(this));
+        autoScalingHook = autoScaleUserCanister;
         sizeLimit = #count(3);
       };
       owners = ?[owner, Principal.fromActor(this)];
@@ -52,21 +52,13 @@ shared ({caller = owner}) actor class IndexCanister() = this {
     newUserCanisterId;
   };
 
-  /// @modify and @required (Do not delete or change the API, but must can modify the function logic for your given application actor and data model)
+  /// This hook is called by CanDB for AutoScaling the User Service Actor.
   ///
-  /// This is method is called by CanDB for AutoScaling. It is up to the developer to specify which
-  /// PK prefixes should spin up which canister actor.
-  ///
-  /// If the developer does not utilize this method, auto-scaling will NOT work
-  public shared({caller = caller}) func createAdditionalCanisterForPK(pk: Text): async Text {
-    Debug.print("creating additional canister for PK=" # pk);
-    // If the call to auto-scale does not come from a canister from the same partition, disallow it
+  /// If the developer does not spin up an additional User canister in the same partition within this method, auto-scaling will NOT work
+  public shared ({caller = caller}) func autoScaleUserCanister(pk: Text): async Text {
+    // Auto-Scaling Authorization - ensure the request to auto-scale the partition is coming from an existing canister in the partition, otherwise reject it
     if (Utils.callingCanisterOwnsPK(caller, pkToCanisterMap, pk)) {
-      if (Text.startsWith(pk, #text("user#"))) {
-        await createUserCanister(pk, ?[owner, Principal.fromActor(this)]);
-      } else {
-        Debug.trap("error: create case not covered");
-      };
+      await createUserCanister(pk, ?[owner, Principal.fromActor(this)]);
     } else {
       Debug.trap("error, called by non-controller=" # debug_show(caller));
     };
@@ -128,7 +120,7 @@ shared ({caller = owner}) actor class IndexCanister() = this {
       limit = 5;
       wasmModule = wasmModule;
       scalingOptions = {
-        autoScalingCanisterId = Principal.toText(Principal.fromActor(this));
+        autoScalingHook = autoScaleUserCanister;
         sizeLimit = #count(20)
       };
       owners = ?[owner, Principal.fromActor(this)];
