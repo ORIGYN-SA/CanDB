@@ -9,6 +9,7 @@ import UserCanister "../user/User";
 import CanisterMap "mo:candb/CanisterMap";
 import CA "mo:candb/CanisterActions";
 import Admin "mo:candb/CanDBAdmin";
+import Utils "mo:candb/Utils";
 
 shared ({caller = owner}) actor class IndexCanister() = this {
   stable var pkToCanisterMap = CanisterMap.init();
@@ -51,23 +52,6 @@ shared ({caller = owner}) actor class IndexCanister() = this {
     newUserCanisterId;
   };
 
-  /// Helper function used for auto-scaling that determines if the calling canister has the same PK as
-  /// the canister that is about to be spun up
-  func callingCanisterOwnsPK(caller: Principal, pk: Text): Bool {
-    Debug.print("called calling canister owns pk");
-    switch(CanisterMap.get(pkToCanisterMap, pk)) {
-      case null { false };
-      case (?canisterIdsBuffer) {
-        for (canisterId in canisterIdsBuffer.elems.vals()) {
-          if (Principal.toText(caller) == canisterId) {
-            return true;
-          }
-        };
-        return false;
-      }
-    }
-  }; 
-
   /// @modify and @required (Do not delete or change the API, but must can modify the function logic for your given application actor and data model)
   ///
   /// This is method is called by CanDB for AutoScaling. It is up to the developer to specify which
@@ -76,14 +60,15 @@ shared ({caller = owner}) actor class IndexCanister() = this {
   /// If the developer does not utilize this method, auto-scaling will NOT work
   public shared({caller = caller}) func createAdditionalCanisterForPK(pk: Text): async Text {
     Debug.print("creating additional canister for PK=" # pk);
-    if (not callingCanisterOwnsPK(caller, pk)) {
-      Debug.trap("error, called by non-controller=" # debug_show(caller));
-    };
-    
-    if (Text.startsWith(pk, #text("user#"))) {
-      await createUserCanister(pk, ?[owner, Principal.fromActor(this)]);
+    // If the call to auto-scale does not come from a canister from the same partition, disallow it
+    if (Utils.callingCanisterOwnsPK(caller, pkToCanisterMap, pk)) {
+      if (Text.startsWith(pk, #text("user#"))) {
+        await createUserCanister(pk, ?[owner, Principal.fromActor(this)]);
+      } else {
+        Debug.trap("error: create case not covered");
+      };
     } else {
-      Debug.trap("error: create case not covered");
+      Debug.trap("error, called by non-controller=" # debug_show(caller));
     };
   };
   
