@@ -97,7 +97,7 @@ module {
 
     attributeValueRBTree;
   };
-  
+
   /// Updates an AttributeMap Red-Black Tree with an Array of (AttributeKey, AttributeValue)
   public func updateAttributeMapWithKVPairs(attributeMap: AttributeMap, attributePairs: [(AttributeKey, AttributeValue)]): AttributeMap {
     var updatedMap = attributeMap;
@@ -109,14 +109,42 @@ module {
   };
 
   /// Gets a value from AttributeMap corresponding to a specific key
+  ///
+  ///
+  /// ```
+  /// let { sk; attributes } = entity;
+  /// let userAttributeTree = getAttributeMapValueForKey(attributes, "userAttributes");
+  /// ```
   public func getAttributeMapValueForKey(attributeMap: AttributeMap, k: AttributeKey): ?AttributeValue {
     RBT.get(attributeMap, Text.compare, k);
   }; 
+
+  /// Extracts a single value from an AttributeValueRBTree if it exists for the key provided
+  ///
+  /// example
+  /// ```
+  /// let { sk; attributes } = entity;
+  /// let userAttributeTree = getAttributeMapValueForKey(attributes, "userAttributes");
+  /// let userBirthday = switch(userAttributes) {
+  ///   case (#tree(attrs)) { getAttributeValueRBTreeValue(attrs, "birthday") };
+  ///   case _ { null };
+  /// };
+  /// ```
+  public func getAttributeValueRBTreeValue(attributeValueRBTree: RBT.Tree<Text, AttributeValueRBTreeValue>, k: Text): ?AttributeValueRBTreeValue {
+    RBT.get<Text, AttributeValueRBTreeValue>(attributeValueRBTree, Text.compare, k)
+  };
 
   /// Extracts all non-null kv pairs as an Array of (AttributeKey, AttributeValue) from the AttributeMap Red-Black Tree
   /// This is function to aid developers in extracting the AttributeKey and AttributeValue from the AttributeMaps for an Entity that is returned from CanDB 
   public func extractKVPairsFromAttributeMap(attributeMap: AttributeMap): [(AttributeKey, AttributeValue)] {
     Iter.toArray(RBT.entries<AttributeKey, AttributeValue>(attributeMap));
+  };
+
+  /// Helper method for extracting all key value pairs from an AttributeValueRBTree.
+  ///
+  /// Returns an Iterator of all attributes in the inner AttributeValueRBTree
+  public func AtributeValueRBTreeToIter(attributeValueRBTree: RBT.Tree<Text, AttributeValueRBTreeValue>): Iter.Iter<(Text, AttributeValueRBTreeValue)> {
+    RBT.entries(attributeValueRBTree);
   };
 
   /// Determines if two AttributeMaps are equal, ignoring deleted values in the AttributeMap Red-Black Tree
