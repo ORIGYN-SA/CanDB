@@ -1,3 +1,6 @@
+![Horizontal_logo](https://user-images.githubusercontent.com/17368530/196894029-c2e9fefa-8ffb-47cb-8fb6-4dbb351c0529.png)
+
+
 # CanDB
 This repository holds the code for the CanDB project. CanDB is a flexible, performant, and horizontally scalable non-relational multi-canister database built for the Internet Computer.
 
