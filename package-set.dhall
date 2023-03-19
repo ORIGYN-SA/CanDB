@@ -9,7 +9,7 @@ let packages = [
   },
   { name = "stable-rbtree"
   , repo = "https://github.com/canscale/StableRBTree"
-  , version = "v0.6.0"
+  , version = "v0.6.1"
   , dependencies = [ "base" ]
   },
   { name = "btree"
