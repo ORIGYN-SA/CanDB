@@ -13,6 +13,7 @@ module {
   public type DB = HT.HashTree;
 
   /// initializes a CanDB data structure
+  /// @deprecated - SingleCanisterCanDB was built for the initial single canister CanDB POC and is no longer maintained
   public func init(): DB {
     HT.init();
   };
