@@ -38,7 +38,7 @@ module {
       }
     };
 
-    buffer.toArray();
+    Buffer.toArray(buffer);
   };
 
   public let testableEntity: T.Testable<E.Entity> = {

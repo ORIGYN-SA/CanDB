@@ -274,7 +274,7 @@ module {
       switch(nodeStack.pop()) {
         // if the stack is empty, no more nodes within the bounds exist, so can return
         case null { 
-          return (resultBuffer.toArray(), nextKey);
+          return (Buffer.toArray(resultBuffer), nextKey);
         };
         case (?(#node(_, l, (sk, map), r))) {
           switch(map) {
@@ -299,7 +299,7 @@ module {
       }
     };
 
-    return (resultBuffer.toArray(), nextKey);
+    return (Buffer.toArray(resultBuffer), nextKey);
   };
 
   type IterScanRep = List.List<{ #rt: RangeTree; #kv: (E.SK, ?E.AttributeMap)}>;

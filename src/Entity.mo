@@ -206,13 +206,13 @@ module {
       case(#text(t1), #text(t2)) { Text.equal(t1, t2) };
       case(#int(i1), #int(i2)) { Int.equal(i1, i2) };
       case(#bool(b1), #bool(b2)) { Bool.equal(b1, b2) };
-      case(#float(f1), #float(f2)) { Float.equal(f1, f2) };
+      case(#float(f1), #float(f2)) { Float.equalWithin(f1, f2, 1e-10) };
       case(#blob(b1), #blob(b2)) { Blob.equal(b1, b2) };
       case(#tuple(tup1), #tuple(tup2)) { Array.equal<AttributeValue>(tup1, tup2, attributeValuesEqual) };
       case(#arrayText(a1), #arrayText(a2)) { Array.equal<Text>(a1, a2, Text.equal) };
       case(#arrayInt(a1), #arrayInt(a2)) { Array.equal<Int>(a1, a2, Int.equal) };
       case(#arrayBool(a1), #arrayBool(a2)) { Array.equal<Bool>(a1, a2, Bool.equal) };
-      case(#arrayFloat(a1), #arrayFloat(a2)) { Array.equal<Float>(a1, a2, Float.equal) };
+      case(#arrayFloat(a1), #arrayFloat(a2)) { Array.equal<Float>(a1, a2, func(a, b) { Float.equalWithin(a, b, 1e-10) }) };
       case(#tree(t1), #tree(t2)) { RBT.equalIgnoreDeleted<Text, AttributeValue>(t1, t2, Text.equal, attributeValuesEqual) };
       case _ { false };
     }
