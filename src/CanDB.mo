@@ -1,6 +1,6 @@
 /// The CanDB module, containing all methods for initializing and interacting with the CanDB data structure
 
-import RT "./RangeTree";
+import RT "RangeTreeV2";
 import Text "mo:base/Text";
 import Array "mo:base/Array";
 import Bool "mo:base/Bool";
@@ -56,6 +56,7 @@ module {
   public type DBInitOptions = {
     pk: E.PK;
     scalingOptions: ScalingOptions;
+    btreeOrder: ?Nat;
   };
 
   /// initializes a CanDB data structure
@@ -100,25 +101,23 @@ module {
 
   /// Create an entity or replace an entity if exists in the DB
   /// Auto scales by signaling the index canister to create a new canister with this PK if at capacity
-  public func put(db: DB, options: PutOptions): async () {
-    ignore await replace(db, options);
+  public func put(db: DB, options: PutOptions): async* () {
+    ignore await* replace(db, options);
   };
 
   public type ReplaceOptions = PutOptions;
 
   /// Create an entity or replace an entity if exists in the DB, returning the replaced entity
   /// Auto scales by signaling the index canister to create a new canister with this PK if at capacity
-  public func replace(db: DB, options: ReplaceOptions): async ?E.Entity {
+  public func replace(db: DB, options: ReplaceOptions): async* ?E.Entity {
     let attributeMap = E.createAttributeMapFromKVPairs(options.attributes);
-    let (ovAttributeMap, rt) = RT.replace(db.data, E.createEntity(db.pk, options.sk, attributeMap));
-    db.data := rt;
+    let ovAttributeMap = RT.replace(db.data, E.createEntity(db.pk, options.sk, attributeMap));
     let ov = switch(ovAttributeMap) {
       case null { 
         db.count += 1;
         null;
       };
       case (?map) {
-        db.data := rt;
         ?{
           pk = db.pk;
           sk = options.sk;
@@ -142,7 +141,7 @@ module {
       }
     };
 
-    await scaleIfAtCapacity(db);
+    await* scaleIfAtCapacity(db);
     ov;
   };
 
@@ -169,7 +168,7 @@ module {
   };
 
   // calls scaleCanister if auto-scaling conditions are met
-  func scaleIfAtCapacity(db: DB): async () {
+  func scaleIfAtCapacity(db: DB): async* () {
     if (shouldScale(db)) {
       // set scalingStatus to #started before the async call so that following messages in the same round
       // that are over the limit/capacity don't spawn additional canisters
@@ -201,11 +200,10 @@ module {
   /// See the create() and update() functions in examples/simpleDB/src/main.mo, and the tests in
   /// updateSuite() in test/HashTreeTest for some examples of how to use CanDB.update()
   public func update(db: DB, options: UpdateOptions): ?E.Entity {
-    let (ovAttributeMap, rt) = RT.update(db.data, options.sk, options.updateAttributeMapFunction);
+    let ovAttributeMap = RT.update(db.data, options.sk, options.updateAttributeMapFunction);
     switch(ovAttributeMap) {
       case null { null };
       case (?map) {
-        db.data := rt;
         ?{
           pk = db.pk;
           sk = options.sk;
@@ -228,11 +226,10 @@ module {
 
   /// Remove an entity from the DB and return that entity if exists
   public func remove(db: DB, options: RemoveOptions): ?E.Entity {
-    let (removedAttributeMap, rt) = RT.remove(db.data, options.sk);
+    let removedAttributeMap = RT.remove(db.data, options.sk);
     switch(removedAttributeMap) {
       case null { null };
       case (?map) {
-        db.data := rt;
         db.count -= 1; // TODO: maybe remove this if decide to go with pure heap sizing for auto-scaling
         ?{
           pk = db.pk;
@@ -268,14 +265,15 @@ module {
 
   /// Scans the DB by partition key, a lower/upper bounded sort key range, and a desired result limit
   /// Returns 0 or more items from the db matching the conditions of the ScanOptions passed
-  public func scan(db: DB, options: ScanOptions): ScanResult {
-    let (skToAttributeMaps, nextKey) = switch(options.ascending) {
-      case (?false) { RT.scanLimitReverse(db.data, options.skLowerBound, options.skUpperBound, options.limit) };
+  public func scan(db: DB, { skLowerBound; skUpperBound; limit; ascending }: ScanOptions): ScanResult {
+    let direction = switch(ascending) {
+      case (?false) { #bwd };
       // (?true or null), default to ascending order
-      case _ { RT.scanLimit(db.data, options.skLowerBound, options.skUpperBound, options.limit) };
+      case _ { #fwd };
     };
+    let { results; nextKey } = RT.scanLimit(db.data, skLowerBound, skUpperBound, limit, direction);
     {
-      entities = Array.map<(E.SK, E.AttributeMap), E.Entity>(skToAttributeMaps, func((sk, attributeMap)) { 
+      entities = Array.map<(E.SK, E.AttributeMap), E.Entity>(results, func((sk, attributeMap)) {
         {
           pk = db.pk;
           sk = sk; 
