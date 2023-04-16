@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "dfx": "0.13.1",
+  "canisters": {
+    "index": {
+      "type": "motoko",
+      "main": "canisters/Index.mo"
+    },
+    "testService": {
+      "type": "motoko",
+      "main": "canisters/TestService.mo"
+    }
+  },
+  "defaults": {
+    "build": {
+      "packtool": "vessel sources",
+      "args": ""
+    }
+  },
+  "networks": {
+    "local": {
+      "type": "ephemeral"
+    }
+  }
+}
