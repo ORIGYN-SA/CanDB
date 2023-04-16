@@ -4,3 +4,5 @@ docs/
 *.dfx
 **/declarations/**
 *.DS_Store
+
+node_modules/

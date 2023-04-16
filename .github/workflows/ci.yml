@@ -6,21 +6,57 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: "install wasmtime"
-      run: |
-       mkdir /home/runner/bin
-       echo "/home/runner/bin" >> $GITHUB_PATH
-       wget https://github.com/bytecodealliance/wasmtime/releases/download/v0.18.0/wasmtime-v0.18.0-x86_64-linux.tar.xz
-       tar xf wasmtime-v0.18.0-x86_64-linux.tar.xz
-       cp wasmtime-v0.18.0-x86_64-linux/wasmtime /home/runner/bin/wasmtime
-    - name: "install vessel"
-      run: |
-       wget --output-document /home/runner/bin/vessel https://github.com/dfinity/vessel/releases/download/v0.6.3/vessel-linux64
-       chmod +x /home/runner/bin/vessel
-    - name: "check"
-      run: make check-strict
-    - name: "test"
-      run: make test
-    - name: "docs"
-      run: make docs
+      # Caching
+      - uses: actions/checkout@v3
+      - name: Cache npm modules 
+        id: cacheNpm 
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-npm
+        with:
+          path: | 
+            **/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      # should hit cache 
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: test_autoscaling/package-lock.json
+      
+      # Installations (should hit cache)
+      - name: Install wasmtime 
+        run: | 
+          mkdir -p /home/runner/bin
+          echo "/home/runner/bin" >> $GITHUB_PATH
+          wget https://github.com/bytecodealliance/wasmtime/releases/download/v0.18.0/wasmtime-v0.18.0-x86_64-linux.tar.xz
+          tar xf wasmtime-v0.18.0-x86_64-linux.tar.xz
+          cp wasmtime-v0.18.0-x86_64-linux/wasmtime /home/runner/bin/wasmtime
+          chmod +x /home/runner/bin/wasmtime
+          ls -l /home/runner/bin/wasmtime
+
+      - name: Install Node modules
+        if: steps.cacheNpm.outputs.cache-hit != 'true'
+        run: |
+          npm i --prefix test_autoscaling
+      
+      - uses: aviate-labs/setup-dfx@v0.2.3
+        with:
+          dfx-version: 0.13.1
+          vessel-version: 0.6.4
+
+      # Type check
+      - name: "check"
+        run: make check-strict
+      # Tests
+      - name: "test"
+        run: make test
+      - name: "integration tests"
+        run: |
+          cd test_autoscaling
+          npm run start
+          npm run test
+          cd ../
+      # Make docs
+      - name: "docs"
+        run: make docs

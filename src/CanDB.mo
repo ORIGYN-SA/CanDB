@@ -1,15 +1,16 @@
 /// The CanDB module, containing all methods for initializing and interacting with the CanDB data structure
 
-import RT "RangeTreeV2";
-import Text "mo:base/Text";
 import Array "mo:base/Array";
 import Bool "mo:base/Bool";
-import E "./Entity";
-
 import Debug "mo:base/Debug";
 import Error "mo:base/Error";
+import Iter "mo:base/Iter";
+import Text "mo:base/Text";
 
 import Prim "mo:⛔";
+
+import E "Entity";
+import RT "RangeTreeV2";
 
 module {
   /// Auto-Scaling Limit Type 
@@ -94,6 +95,11 @@ module {
     }
   };
 
+  /// Batch create or replace entities if exists in the DB
+  public func batchPut(db: DB, options: [(PutOptions)]): async* () {
+    ignore await* batchReplace(db, options);
+  };
+
   public type PutOptions = {
     sk: E.SK;
     attributes: [(E.AttributeKey, E.AttributeValue)];
@@ -103,6 +109,50 @@ module {
   /// Auto scales by signaling the index canister to create a new canister with this PK if at capacity
   public func put(db: DB, options: PutOptions): async* () {
     ignore await* replace(db, options);
+  };
+
+
+  /// Batches creates or replaces a multiple entities if they exist in the DB, returning the replaced entity
+  /// Auto scales by signaling the index canister to create a new canister with this PK if at capacity
+  public func batchReplace(db: DB, options: [(ReplaceOptions)]): async* [(?E.Entity)] {
+    // if the canister has scaled and surpassed the heap size update limit, inserts or updates are no longer allowed and the canister must be manually repartitioned
+    if (db.scalingStatus == #complete and Prim.rts_heap_size() > HEAP_SIZE_UPDATE_LIMIT) {
+      Debug.trap("[ATTENTION NEEDED]: Canister has scaled and surpassed the heap size update limit. This canister must now be manually repartitioned. Overriding this limit may render your canister unresponsive and result in irrecoverable data loss.");
+    };
+
+    // if the canister has scaled and surpassed the heap size insert limit, updates are allowed but inserts are no longer allowed
+    var insertLimitAlreadyReached = db.scalingStatus == #complete or Prim.rts_heap_size() > HEAP_SIZE_INSERT_LIMIT;
+    let replacedEntities = Array.init<?E.Entity>(options.size(), null);
+    Iter.iterate<ReplaceOptions>(options.vals(), func(option: ReplaceOptions, i: Nat) {
+      // replace existing entity attributes if it exists
+      // if entity does not exist
+      if (not skExists(db, option.sk) and insertLimitAlreadyReached) {
+        Debug.trap("Canister has scaled and surpassed the heap size insert limit");
+      };
+      replacedEntities[i] := switch(RT.replace(
+        db.data,
+        E.createEntity(db.pk, option.sk, E.createAttributeMapFromKVPairs(option.attributes))
+      )) {
+        // entity did not previously exist
+        case null {
+          db.count += 1;
+          null
+        };
+        // entity previously existed, attributes were updated
+        case (?map) {
+          ?{
+            pk = db.pk;
+            sk = option.sk;
+            attributes = map;
+          }
+        }
+      };
+    });
+
+    // scale if at capacity
+    await* scaleIfAtCapacity(db);
+
+    Array.freeze(replacedEntities);
   };
 
   public type ReplaceOptions = PutOptions;
