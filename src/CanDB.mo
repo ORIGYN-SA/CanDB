@@ -246,6 +246,11 @@ module {
   /// Substitutes in a new key in for the current/old key, preserving the same attributes as the previous key (if the key previously exists in CanDB).
   /// This returns the old Entity if it existed, otherwise it returns null
   public func substituteKey(db: DB, options: SubstituteKeyOptions): ?E.Entity {
+    // if the canister has scaled and surpassed the heap size update limit, key substitutions are no longer allowed and the canister must be manually repartitioned
+    if (db.scalingStatus == #complete and Prim.rts_heap_size() > HEAP_SIZE_UPDATE_LIMIT) {
+      Debug.trap("[ATTENTION NEEDED]: Canister has scaled and surpassed the heap size update limit. This canister must now be manually repartitioned. Overriding this limit may render your canister unresponsive and result in irrecoverable data loss.");
+    };
+
     let ov = RT.substituteKey(db.data, options.oldSK, options.newSK);
     switch(ov) {
       case null { null };
