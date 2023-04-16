@@ -26,8 +26,7 @@ describe("Multiple single inserts", () => {
     )}));
   });
 
-  it("partition should have 2 canisters, with 20 in one and zero in the other", async () => {
-    //let canistersInPK = await indexClient.getCanistersForPK("pk");
+  it("partition should have 2 canisters (one autoscaled), with 20 in one and zero in the other", async () => {
     let canisterDBSizes = await testServiceClient.query<TestService["getDBSize"]>(
       pk,
       actor => actor.getDBSize(),
@@ -39,5 +38,24 @@ describe("Multiple single inserts", () => {
     let canisterValues = [canisterDBSizes[0].value, canisterDBSizes[1].value];
     // expect all inserts to be in the first canister
     expect(canisterValues).toEqual([20n, 0n])
+  });
+
+  it("inserting one more entity makes the second canister have 1 entity (not auto-scaled)", async () => {
+    await testServiceClient.update<TestService["addEntity"]>(
+      pk,
+      "20",
+      actor => actor.addEntity("20", 20n)
+    );
+    let canisterDBSizes = await testServiceClient.query<TestService["getDBSize"]>(
+      pk,
+      actor => actor.getDBSize(),
+    );
+    // expect auto-scaling to have happened
+    expect(canisterDBSizes.length).toBe(2);
+    if (canisterDBSizes[0].status === "rejected" || canisterDBSizes[1].status === "rejected") throw new Error("Unreachable")
+
+    let canisterValues = [canisterDBSizes[0].value, canisterDBSizes[1].value];
+    // expect all inserts to be in the first canister
+    expect(canisterValues).toEqual([20n, 1n])
   });
 });

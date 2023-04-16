@@ -23,8 +23,7 @@ describe("One batch insert", () => {
     );
   });
 
-  it("partition should have 2 canisters, with 20 in one and zero in the other", async () => {
-    //let canistersInPK = await indexClient.getCanistersForPK("pk");
+  it("partition should have 2 canisters (one autoscaled), with 20 in one and zero in the other", async () => {
     let canisterDBSizes = await testServiceClient.query<TestService["getDBSize"]>(
       pk,
       actor => actor.getDBSize(),
@@ -36,5 +35,28 @@ describe("One batch insert", () => {
     let canisterValues = [canisterDBSizes[0].value, canisterDBSizes[1].value];
     // expect all inserts to be in the first canister
     expect(canisterValues).toEqual([20n, 0n])
+  });
+
+  it("batch inserting once again with 30 entities makes the second canister have 30 entities and autoscale", async () => {
+    await testServiceClient.update<TestService["insertEntities"]>(
+      pk,
+      "N/A",
+      actor => actor.insertEntities(30n)
+    );
+    let canisterDBSizes = await testServiceClient.query<TestService["getDBSize"]>(
+      pk,
+      actor => actor.getDBSize(),
+    );
+    // expect auto-scaling to have happened
+    expect(canisterDBSizes.length).toBe(3);
+    if (
+      canisterDBSizes[0].status === "rejected" || 
+      canisterDBSizes[1].status === "rejected" ||
+      canisterDBSizes[2].status === "rejected"
+    ) throw new Error("Unreachable")
+
+    let canisterValues = [canisterDBSizes[0].value, canisterDBSizes[1].value, canisterDBSizes[2].value];
+    // expect all inserts to be in the first canister
+    expect(canisterValues).toEqual([20n, 30n, 0n])
   });
 });
