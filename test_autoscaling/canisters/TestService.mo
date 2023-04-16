@@ -1,6 +1,7 @@
 import CA "../../src/CanisterActions";
 import CanDB "../../src/CanDB";
 import Entity "../../src/Entity";
+import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
 import Principal "mo:base/Principal";
 import Nat "mo:base/Nat";
@@ -63,18 +64,13 @@ shared ({ caller = owner }) actor class TestService({
     let start = db.count;
     let end = db.count + numEntitiesToInsert;
     var i = db.count;
-    while (i < start + numEntitiesToInsert) {
-      try {
-        await* CanDB.put(db, {
-          sk = Nat.toText(i);
-          attributes = [("i", #int(i))];
-        });
-      } catch(err) {
-        return #err("Error inserting entity: " # Error.message(err));
+    let entities = Array.tabulate(numEntitiesToInsert, func (i: Nat): CanDB.PutOptions {
+      {
+        sk = Nat.toText(i);
+        attributes = [("i", #int(i))];
       };
-      i += 1;
-
-    };
+    });
+    await* CanDB.batchPut(db, entities);
 
     let stats = {
       recordsAdded = numEntitiesToInsert;

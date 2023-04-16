@@ -14,10 +14,10 @@ describe("One batch insert", () => {
     indexClient = initializeIndexClient();
     testServiceClient = initializeTestServiceClient(indexClient);
     // create the partition
-    await indexClient.indexCanisterActor.createTestServicePartition("pk");
+    await indexClient.indexCanisterActor.createTestServicePartition(pk);
     // insert one batch of 20 entities (auto-scaling should happen at 3)
     await testServiceClient.update<TestService["insertEntities"]>(
-      "pk",
+      pk,
       "N/A",
       actor => actor.insertEntities(20n)
     );
@@ -37,5 +37,4 @@ describe("One batch insert", () => {
     // expect all inserts to be in the first canister
     expect(canisterValues).toEqual([20n, 0n])
   });
-
 });
