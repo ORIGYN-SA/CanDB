@@ -23,9 +23,10 @@ jobs:
     - name: "test"
       run: make test
     - name: "test integrations"
-      cd test_autoscaling
-      npm run start
-      npm run test
-      cd ../
+      run: |
+        cd test_autoscaling
+        npm run start
+        npm run test
+        cd ../
     - name: "docs"
       run: make docs
