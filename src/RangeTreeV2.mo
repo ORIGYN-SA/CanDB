@@ -9,6 +9,7 @@ import Int "mo:base/Int";
 import List "mo:base/List";
 import Stack "mo:base/Stack";
 import Option "mo:base/Option";
+import RangeTree "RangeTree";
 
 module {
   /// A RangeTree data structure is a BTree mapping of a Sort Key (Text) to an AttributeMap
@@ -37,6 +38,10 @@ module {
       entity.sk,
       entity.attributes
     );
+  };
+
+  public func substituteKey(rt: RangeTree, oldKey: E.SK, newKey: E.SK): ?E.AttributeMap {
+    BT.substituteKey<E.SK, E.AttributeMap>(rt, Text.compare, oldKey, newKey);
   };
 
   /// Creates or updates an entry in the RangeTree based upon if the sk of the entity provided exists.
