@@ -42,13 +42,16 @@ module {
       case (?map) {
         switch(E.getAttributeMapValueForKey(map, countKey)) {
           case null {
-            E.updateAttributeMapWithKVPairs(map, [
-              (countKey, #int(1))
-            ])
+            let updated = E.updateAttributeMapWithKVPairs(map, [
+              (countKey, #int(1)),
+              ("isCountNull", #bool(false))
+            ]);
+            updated;
           };
           case (?(#int(existingCount))) {
             E.updateAttributeMapWithKVPairs(map, [
-              (countKey, #int(existingCount + 1))
+              (countKey, #int(existingCount + 1)),
+              ("isCountNull", #bool(false))
             ])
           };
           case _ { 
