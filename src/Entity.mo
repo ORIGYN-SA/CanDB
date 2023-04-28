@@ -101,8 +101,9 @@ module {
   /// Updates an AttributeMap Red-Black Tree with an Array of (AttributeKey, AttributeValue)
   public func updateAttributeMapWithKVPairs(attributeMap: AttributeMap, attributePairs: [(AttributeKey, AttributeValue)]): AttributeMap {
     var updatedMap = attributeMap;
+
     for ((k, v) in attributePairs.vals()) {
-      updatedMap := RBT.put<AttributeKey, AttributeValue>(attributeMap, Text.compare, k, v);
+      updatedMap := RBT.put<AttributeKey, AttributeValue>(updatedMap, Text.compare, k, v);
     };
 
     updatedMap; 

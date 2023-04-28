@@ -365,8 +365,84 @@ let attributeValuesEqualSuite = suite("attributeValuesEqual",
   ]
 );
 
+let updateAttributeMapWithKVPairsTest = suite("updateAttributeMapWithKVPairs", [
+  test("if updating an empty map with no attributes, returns an empty map",
+    do {
+      let m = E.createAttributeMapFromKVPairs([]);
+      let m2 = E.updateAttributeMapWithKVPairs(m, []);
+      E.attributeMapsEqual(m, m2);
+    },
+    M.equals(T.bool(true))
+  ),
+  test("if updating an empty map with new attributes, returns the updated map",
+    do {
+      let m = E.createAttributeMapFromKVPairs([]);
+      let m2 = E.updateAttributeMapWithKVPairs(m, [
+        ("tKey", #text("hello")),
+        ("fKey", #float(3.14159)),
+      ]);
+      let m3 = E.createAttributeMapFromKVPairs([
+        ("tKey", #text("hello")),
+        ("fKey", #float(3.14159)),
+      ]);
+      E.attributeMapsEqual(m2, m3);
+    },
+    M.equals(T.bool(true))
+  ),
+  test("if updating with no attributes, returns the same map",
+    do {
+      let m = E.createAttributeMapFromKVPairs([
+        ("iKey", #int(10)),
+        ("bKey", #bool(false)),
+      ]);
+      let m2 = E.updateAttributeMapWithKVPairs(m, []);
+      E.attributeMapsEqual(m, m2);
+    },
+    M.equals(T.bool(true))
+  ),
+  test("if updating with new attributes, returns the updated map",
+    do {
+      let m = E.createAttributeMapFromKVPairs([
+        ("iKey", #int(10)),
+        ("bKey", #bool(false)),
+      ]);
+      let m2 = E.updateAttributeMapWithKVPairs(m, [
+        ("tKey", #text("hello")),
+        ("fKey", #float(3.14159)),
+      ]);
+      let m3 = E.createAttributeMapFromKVPairs([
+        ("iKey", #int(10)),
+        ("bKey", #bool(false)),
+        ("tKey", #text("hello")),
+        ("fKey", #float(3.14159)),
+      ]);
+      E.attributeMapsEqual(m2, m3);
+    },
+    M.equals(T.bool(true))
+  ),
+  test("if updating existing attributes, returns the correct updated map",
+    do {
+      let m = E.createAttributeMapFromKVPairs([
+        ("iKey", #int(10)),
+        ("bKey", #bool(false)),
+      ]);
+      let m2 = E.updateAttributeMapWithKVPairs(m, [
+        ("iKey", #int(9)),
+        ("bKey", #bool(true)),
+      ]);
+      let m3 = E.createAttributeMapFromKVPairs([
+        ("iKey", #int(9)),
+        ("bKey", #bool(true)),
+      ]);
+      E.attributeMapsEqual(m2, m3);
+    },
+    M.equals(T.bool(true))
+  ),
+]);
+
 run(suite("Entity",
   [
-    attributeValuesEqualSuite
+    attributeValuesEqualSuite,
+    updateAttributeMapWithKVPairsTest,
   ]
 ));
