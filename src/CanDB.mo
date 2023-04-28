@@ -18,8 +18,10 @@ module {
   /// A developer can choose to auto-scale by the count of entities that have been inserted or by the canister heap size
   public type ScalingLimitType = { #count: Nat; #heapSize: Nat };
 
-  let HEAP_SIZE_INSERT_LIMIT = 1_250_000_000; // 1.25GB
-  let HEAP_SIZE_UPDATE_LIMIT = 1_750_000_000; // 1.75GB
+  // Bump these limits just for scalability testing purposes
+  // DO NOT USE THESE IN PRODUCTION
+  let HEAP_SIZE_INSERT_LIMIT = 4_250_000_000; // 1.25GB
+  let HEAP_SIZE_UPDATE_LIMIT = 4_750_000_000; // 1.75GB
 
   /// The public API provided by the Index canister (or canister responsible for scaling) that is used to auto-scale the current canister
   type AutoScalingCanisterSharedFunctionHook = shared (Text) -> async Text; 
