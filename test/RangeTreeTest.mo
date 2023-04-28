@@ -230,7 +230,7 @@ let updateSuite = suite("update",
             pk = "app1";
             sk = "apples";
             attributes = E.createAttributeMapFromKVPairs([
-              ("count", #int(1))
+              ("count", #int(1)),
             ]);
           })
         ))
@@ -265,6 +265,7 @@ let updateSuite = suite("update",
             sk = "apples";
             attributes = E.createAttributeMapFromKVPairs([
               ("count", #int(1)),
+              ("isCountNull", #bool(false)),
               ("state", #text("OH")),
               ("year", #int(2020)),
               ("city", #text("Cleveland")),
@@ -301,6 +302,7 @@ let updateSuite = suite("update",
             sk = "shwarma";
             attributes = E.createAttributeMapFromKVPairs([
               ("count", #int(51)),
+              ("isCountNull", #bool(false)),
               ("state", #text("CA")),
               ("year", #int(2021)),
               ("city", #text("Oakland")),
