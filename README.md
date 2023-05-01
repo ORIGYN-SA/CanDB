@@ -2,32 +2,19 @@
 
 
 # CanDB
-This repository holds the code for the CanDB project. CanDB is a flexible, performant, and horizontally scalable non-relational multi-canister database built for the Internet Computer.
+This repository holds the code for the [CanDB]((https://docs.google.com/document/d/1HrJuX9l-UL3rWbPDF-PXdVjG6oHy9h6sIhHgVqROFXE/)) project. CanDB is a flexible, performant, and horizontally scalable non-relational multi-canister data store built for the Internet Computer.
+
+CanDB was the 2nd place finisher in the Internet Computer Supernova Hackathon, hosted by DFINITY in June of 2022.
 
 <br/>
 
-**Disclaimer:** This library and repository is currently in alpha development. This means the software has not been thoroughly tested, and that the maintainer(s) are **not** guaranteeing backwards compatibility between alpha releases at this time. This software will continue to be released as "alpha" until its code and APIs are considered stable.
+**Disclaimer:** This library and repository is currently in beta development. This means the software has been tested and used by several independent parties, but that the maintainer(s) are **not** guaranteeing backwards compatibility between future releases at this time. This software and its APIs should not change considerably  , except in the case of security issues or major feature improvement and otherwise considered mostly stable.
 
 <br/>
 
-## Setup and Installation
+## Documentation (start here)
 
-CanDB can be installed as a Motoko module for your project using the vessel package manager.
-
-Once vessel is installed, you can start a new project using the [candb-quickstart-template](https://github.com/canscale/candb-quickstart-template) template and CLI tool, or you can work off of one of the cloned examples in this repository located in the `examples` folder, ensuring that you pull in all of the necessary dependencies shown there for your [package-set.dhall](https://github.com/canscale/CanDB/blob/main/examples/multiCanister/simpleMultiCanister/package-set.dhall) and [vessel.dhall](https://github.com/canscale/CanDB/blob/main/examples/multiCanister/simpleMultiCanister/vessel.dhall).
-
-<br/>
-
-## Usage & Examples
-
-To learn how set up a single canister example with SingleCanisterCanDB see the `examples/singleCanister` folder 
-* `examples/singleCanister/simpleDB` is a basic example how one might setup and integrate various canister APIs with CanDB.
-* `examples/singleCanister/transactionsApp` goes into building a transactions API. This is a more complicated example that takes one through defining user access patterns and then designing your partition and sort keys to meet those requirements.
-
-<br/>
-
-To learn how to set up a multi canister example with CanDB see the `examples/multiCanister` folder
-* `examples/multiCanister/simpleMultiCanister` has a basic example of how one can set up an User Actor canister with CanDB, and set up an Index Canister that provides rolling upgrades, creation of new User Canisters via the PK, and auto-scaling of existing User Canisters
+Just getting started with CanDB? Head to the [Documentation site](https://docs.google.com/document/d/1HrJuX9l-UL3rWbPDF-PXdVjG6oHy9h6sIhHgVqROFXE/), which contains tutorials and explains core CanDB concepts for those who want to dig deeper!
 
 <br/>
 
@@ -37,16 +24,9 @@ API documentation for this library can be found at https://candb.canscale.dev
 
 <br/>
 
-## About CanDB 
+## Benchmarks
 
-**Entity** - An entity is the base data record or item that is stored in CanDB. It consists of:
-  - Partition Key (PK) - A text/string partition key identifier used to partition your data. 
-  - Sort Key (SK) - A text/string key identifier used to sort your data. Some examples might be a timestamp, an incrementing identifier, or a numerical value (turned into a string). 
-  - Attributes - Additional key/value data pertaining to the entity. All attribute keys are of type text/string, and attribute values are expressed as variants, allowing for the dynamic insertion of different types of attribute values.
-  
-  - The combination of an entity's partition key + sort key is unique in CanDB, meaning only one entity can have the exact same partition key and sort key.
-
-<br/>
+To view benchmarks for a single CanDB canister, see [https://github.com/internet-computer/candb-benchmarks](https://github.com/internet-computer/candb-benchmarks). CanDB is horizontally scalable, so these benchmarks keep constant performance as CanDB auto-scales, with the only limitation/bottleneck being simultaneous browser connection limits.
 
 ## Milestones 
 

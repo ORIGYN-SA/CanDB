@@ -20,16 +20,16 @@
 - [x] Build and demo a simple application interacting directly with a CanDB instance canister manager which is controlling and has data stored in multiple storage partition canisters.
 
 ### CanDB alpha goals (In progress, complete in tandem with Milestone 2)
-- [] Cultivate an passionate alpha community dedicated to building at scale and pushing the limits of what's possible on the IC
-- [] Reduce developer adoption friction by improve CanDB documentation and quickstart tooling
-- [] Refine existing CanDB and CanDBAdmin APIs through developer feedback
-- [] Receive cycle management feedback, leading to the appropriate API abstraction
-  - [] Design and implement cycle management and apportioning between the CanDB canister manager and storage partition canisters. Provide API allowing the developer to query remaining cycles at the canister manager level.
-- [] Use developer input/feedback to help scope and prioritize new features.
+- [x] Cultivate an passionate alpha community dedicated to building at scale and pushing the limits of what's possible on the IC
+- [x] Reduce developer adoption friction by improve CanDB documentation and quickstart tooling
+- [x] Refine existing CanDB and CanDBAdmin APIs through developer feedback
+- ~~[] Receive cycle management feedback, leading to the appropriate API abstraction~~ -> CycleOps
+  - ~~[] Design and implement cycle management and apportioning between the CanDB canister manager and storage partition canisters. Provide API allowing the developer to query remaining cycles at the canister manager level.~~ -> Doing in CycleOps grant #2
+- [x] Use developer input/feedback to help scope and prioritize new features.
 
 ### Milestone 2 [] (In progress)
-- [] Measure and fine tune performance of CanDB APIs as the number of records and storage partitions increase
-  - [] Define metrics, such as:
+- [x ] Measure and fine tune performance of CanDB APIs as the number of records and storage partitions increase
+  - [x] Define metrics, such as:
     - query/update performance
     - canister memory used
     - request throughput (number of concurrent query/update calls CanDB is able to process in a short burst of time)
