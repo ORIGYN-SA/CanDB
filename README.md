@@ -53,6 +53,6 @@ API documentation for this library can be found at https://candb.canscale.dev
 See MILESTONES.md to view milestone status (in progress vs. completed features)
 
 ## License
-CanDB is distributed under the terms of the Apache License (Version 2.0).
+CanDB is distributed under the terms of the Origyn Foundation Software License (OFSL v1.0).
 
-See LICENSE for details.
+See [LICENSE](license.md) for details.
