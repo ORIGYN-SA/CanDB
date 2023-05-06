@@ -24,6 +24,10 @@ API documentation for this library can be found at https://candb.canscale.dev
 
 <br/>
 
+## Questions/Community
+
+If you run into any issues, have questions, or feature requests feel free to file an issue in this repository. Also, you can join the [CanScale discord](https://discord.gg/DgAarrEGps) and hop over to the CanDB Category.
+
 ## Benchmarks
 
 To view benchmarks for a single CanDB canister, see [https://github.com/internet-computer/candb-benchmarks](https://github.com/internet-computer/candb-benchmarks). CanDB is horizontally scalable, so these benchmarks keep constant performance as CanDB auto-scales, with the only limitation/bottleneck being simultaneous browser connection limits.
