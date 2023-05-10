@@ -15,6 +15,7 @@ shared ({ caller = owner }) actor class UserCanister({
   stable let db = CanDB.init({
     pk = partitionKey;
     scalingOptions = scalingOptions;
+    btreeOrder = null;
   });
 
   /// @recommended (not required) public API
@@ -34,7 +35,7 @@ shared ({ caller = owner }) actor class UserCanister({
 
   /// Example of inserting a static entity into CanDB with an sk provided as a parameter
   public func addEntity(sk: Text): async Text {
-    await CanDB.put(db, {
+    await* CanDB.put(db, {
       sk = sk;
       attributes = [
       ("name", #text("joe")),

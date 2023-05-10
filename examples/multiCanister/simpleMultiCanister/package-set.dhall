@@ -1,10 +1,10 @@
 let upstream =
-  https://github.com/dfinity/vessel-package-set/releases/download/mo-0.6.21-20220215/package-set.dhall sha256:b46f30e811fe5085741be01e126629c2a55d4c3d6ebf49408fb3b4a98e37589b  
+      https://github.com/dfinity/vessel-package-set/releases/download/mo-0.8.4-20230311/package-set.dhall
 
 let packages = [
   { name = "stable-rbtree"
   , repo = "https://github.com/canscale/StableRBTree"
-  , version = "v0.6.0"
+  , version = "v0.6.1"
   , dependencies = [ "base" ]
   },
   { name = "stable-buffer"
@@ -12,10 +12,15 @@ let packages = [
   , version = "v0.2.0"
   , dependencies = [ "base" ]
   },
+  { name = "btree"
+  , repo = "https://github.com/canscale/StableHeapBTreeMap"
+  , version = "v0.3.2"
+  , dependencies = [ "base" ]
+  },
   { name = "candb"
-  , repo = "https://github.com/canscale/candb"
-  , version = "alpha"
-  , dependencies = [ "base", "stable-rbtree", "stable-buffer" ]
+  , repo = "git@github.com:canscale/CanDB.git"
+  , version = "beta"
+  , dependencies = [ "base" ]
   },
 ]
 
