@@ -14,7 +14,7 @@ let packages = [
   },
   { name = "btree"
   , repo = "https://github.com/canscale/StableHeapBTreeMap"
-  , version = "v0.3.1"
+  , version = "v0.3.2"
   , dependencies = [ "base" ]
   },
   { name = "stable-buffer"
