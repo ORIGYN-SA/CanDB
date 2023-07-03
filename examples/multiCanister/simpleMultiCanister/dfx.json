@@ -12,10 +12,11 @@
   },
   "defaults": {
     "build": {
-      "packtool": "vessel sources",
+      "packtool": "mops sources",
       "args": ""
     }
   },
+  "dfx": "0.14.1",
   "networks": {
     "local": {
       "bind": "127.0.0.1:8000",

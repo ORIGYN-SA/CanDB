@@ -5,7 +5,7 @@
 **Note:** Since CanDB is not yet public, In order to run this working example, the commands below 
 need to be run from the examples/simpleDB directory
 
-1. Ensure you are using dfx version `0.9.3` (specified in the `dfx.json`)
+1. Ensure you are using dfx version `0.14.1` (specified in the `dfx.json`)
 2. Create the simpleDB canister on the local network -> run `dfx canister create simpleDB`
 3. Ensure the simpleDB application builds -> run `dfx build simpleDB`
 4. Deploy the canister to the local network -> run `dfx deploy simpleDB`

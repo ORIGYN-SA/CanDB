@@ -2,7 +2,7 @@
 
 
 # CanDB
-This repository holds the code for the [CanDB]((https://docs.google.com/document/d/1HrJuX9l-UL3rWbPDF-PXdVjG6oHy9h6sIhHgVqROFXE/)) project. CanDB is a flexible, performant, and horizontally scalable non-relational multi-canister data store built for the Internet Computer.
+This repository holds the code for the [CanDB](https://ykgs2-ziaaa-aaaak-qcfya-cai.icp0.io/) project. CanDB is a flexible, performant, and horizontally scalable non-relational multi-canister data store built for the Internet Computer.
 
 CanDB was the 2nd place finisher in the Internet Computer Supernova Hackathon, hosted by DFINITY in June of 2022.
 
@@ -14,7 +14,7 @@ CanDB was the 2nd place finisher in the Internet Computer Supernova Hackathon, h
 
 ## Documentation (start here)
 
-Just getting started with CanDB? Head to the [Documentation site](https://docs.google.com/document/d/1HrJuX9l-UL3rWbPDF-PXdVjG6oHy9h6sIhHgVqROFXE/), which contains tutorials and explains core CanDB concepts for those who want to dig deeper!
+Just getting started with CanDB? Head to the [Documentation site](https://ykgs2-ziaaa-aaaak-qcfya-cai.icp0.io/docs/category/tutorial---basics), which contains tutorials and explains core CanDB concepts for those who want to dig deeper!
 
 <br/>
 

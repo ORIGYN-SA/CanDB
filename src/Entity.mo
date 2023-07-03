@@ -8,7 +8,10 @@ import Int "mo:base/Int";
 import Iter "mo:base/Iter";
 import Nat32 "mo:base/Nat32";
 import Text "mo:base/Text";
+
+import CandyTypes "mo:candy/types";
 import RBT "mo:stable-rbtree/StableRBTree";
+
 
 module {
   /// Partition Key
@@ -24,6 +27,11 @@ module {
     #int: Int;
     #bool: Bool;
     #float: Float;
+  };
+
+  /// AttributeValueCandy primitive options 
+  public type AttributeValueCandyPrimitive = {
+    #candy: CandyTypes.CandyShared;
   };
 
   public type AttributeValueBlob = {
@@ -43,7 +51,7 @@ module {
     #arrayFloat: [Float];
   };
 
-  public type AttributeValueRBTreeValue = AttributeValuePrimitive or AttributeValueBlob or AttributeValueTuple or AttributeValueArray;
+  public type AttributeValueRBTreeValue = AttributeValuePrimitive or AttributeValueBlob or AttributeValueTuple or AttributeValueArray or AttributeValueCandyPrimitive;
 
   /// An AttributeValue can be a map (tree) with text keys and values as AttributeValuePrimitive or AttributeValueArray
   public type AttributeValueRBTree = {
@@ -56,7 +64,8 @@ module {
     AttributeValueBlob or
     AttributeValueTuple or
     AttributeValueArray or
-    AttributeValueRBTree;
+    AttributeValueRBTree or
+    AttributeValueCandyPrimitive;
  
   /// Key to Value mapping of all Entity attributes, stored in a Red-Black Tree
   public type AttributeMap = RBT.Tree<AttributeKey, AttributeValue>;
