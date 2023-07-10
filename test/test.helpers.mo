@@ -1,6 +1,7 @@
+import Text "mo:base/Text";
+
 import E "../src/Entity";
 import HT "../src/HashTree";
-import Text "mo:base/Text";
 
 /// This module contains helpers for setting up data structures in tests
 module {

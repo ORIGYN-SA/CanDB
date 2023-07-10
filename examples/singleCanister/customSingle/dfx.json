@@ -1,6 +1,6 @@
 {
     "canisters": {
-      "simpleDB": {
+      "customSingle": {
         "main": "src/main.mo",
         "type": "motoko"
       }

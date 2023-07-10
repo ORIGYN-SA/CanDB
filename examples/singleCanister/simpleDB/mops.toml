@@ -1,0 +1,7 @@
+[dependencies]
+base = "0.9.0"
+stable-hash-map = "https://github.com/canscale/StableHashMap#v0.2.1"
+stable-rbtree = "https://github.com/canscale/StableRBTree#v0.3.0"
+stablebuffer = "https://github.com/skilesare/StableBuffer#v0.2.0"
+map = "https://github.com/ZhenyaUsenko/motoko-hash-map#v7.0.0"
+candy = "https://github.com/icdevs/candy_library#0.2.0"

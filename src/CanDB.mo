@@ -5,9 +5,8 @@ import Bool "mo:base/Bool";
 import Debug "mo:base/Debug";
 import Error "mo:base/Error";
 import Iter "mo:base/Iter";
-import Text "mo:base/Text";
-
 import Prim "mo:⛔";
+import Text "mo:base/Text";
 
 import E "Entity";
 import RT "RangeTreeV2";

@@ -11,9 +11,12 @@
 ///     create() 
 ///     update() 
 
-import CanDB "../../../src/SingleCanisterCanDB";
-import Entity "../../../src/Entity";
 import Array "mo:base/Array";
+
+import CandyTypes "mo:candy/types";
+
+import CanDB "../../../../src/SingleCanisterCanDB";
+import Entity "../../../../src/Entity";
 
 actor {
 
@@ -152,4 +155,6 @@ actor {
       nextKey = nextKey;
     }
   };
+
+
 }

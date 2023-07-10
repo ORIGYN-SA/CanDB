@@ -1,11 +1,13 @@
-import M "mo:matchers/Matchers";
-import T "mo:matchers/Testable";
-import RT "../src/RangeTree";
-import E "../src/Entity";
-import Option "mo:base/Option";
-import Iter "mo:base/Iter";
 import Array "mo:base/Array";
+import Iter "mo:base/Iter";
+import Option "mo:base/Option";
 import Text "mo:base/Text";
+
+import {test; suite;} "mo:test";
+
+import E "../src/Entity";
+import RT "../src/RangeTree";
+import T "Testable";
 
 /// This module contains Testable typed helpers functions for the tests in RangeTreeTest.mo
 module {

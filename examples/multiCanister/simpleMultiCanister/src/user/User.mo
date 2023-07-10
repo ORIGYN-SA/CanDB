@@ -1,7 +1,8 @@
-import CA "mo:candb/CanisterActions";
-import CanDB "mo:candb/CanDB";
-import Entity "mo:candb/Entity";
 import Principal "mo:base/Principal";
+
+import CA "../../../../../src/CanisterActions";
+import CanDB "../../../../../src/CanDB";
+import Entity "../../../../../src/Entity";
 
 shared ({ caller = owner }) actor class UserCanister({
   partitionKey: Text;

@@ -1,15 +1,15 @@
-import Principal "mo:base/Principal";
-import Debug "mo:base/Debug";
 import Cycles "mo:base/ExperimentalCycles";
+import Debug "mo:base/Debug";
+import Principal "mo:base/Principal";
 import Text "mo:base/Text";
-import Buffer "mo:stable-buffer/StableBuffer";
 
-import UserCanister "../user/User";
+import Buffer "mo:stablebuffer/StableBuffer";
 
-import CanisterMap "mo:candb/CanisterMap";
-import CA "mo:candb/CanisterActions";
-import Admin "mo:candb/CanDBAdmin";
-import Utils "mo:candb/Utils";
+import Admin "../../../../../src/CanDBAdmin";
+import CA "../../../../../src/CanisterActions";
+import CanisterMap "../../../../../src/CanisterMap";
+import UserCanister "../user/user";
+import Utils "../../../../../src/Utils";
 
 shared ({caller = owner}) actor class IndexCanister() = this {
   stable var pkToCanisterMap = CanisterMap.init();

@@ -1,15 +1,17 @@
 /// "HashTree" (single canister CanDB only) - the data structure underlying SingleCanisterCanDB. A HashTree is a stable HashMap, which contains a HashTable storing a mapping of an Partition Key to RangeTree,
 /// where the RangeTree contains a mapping of an Entity's Sort Key to its Attributes
 
+import A "mo:base/Array";
+import AssocList "mo:base/AssocList";
+import List "mo:base/List";
+import Nat32 "mo:base/Nat32";
+import Text "mo:base/Text";
+
 import HM "mo:stable-hash-map/FunctionalStableHashMap";
 import RBT "mo:stable-rbtree/StableRBTree";
-import A "mo:base/Array";
-import Text "mo:base/Text";
-import Nat32 "mo:base/Nat32";
-import List "mo:base/List";
+
 import E "./Entity";
 import RT "./RangeTree";
-import AssocList "mo:base/AssocList";
 
 module {
   type HTKVs = AssocList.AssocList<E.PK, RT.RangeTree>;
