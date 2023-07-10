@@ -156,8 +156,5 @@ actor {
     }
   };
 
-  public query func testCandy(input: CandyTypes.CandyShared): async CandyTypes.CandyShared {
-    input
-  };
 
 }

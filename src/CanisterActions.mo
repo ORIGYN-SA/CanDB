@@ -1,9 +1,10 @@
 /// CanisterActions - High level asynchronous functions for interacting with the IC Management Canister
 
-import InterfaceSpec "./InterfaceSpec";
 import Cycles "mo:base/ExperimentalCycles";
 import Debug "mo:base/Debug";
 import Nat "mo:base/Nat";
+
+import InterfaceSpec "./InterfaceSpec";
 
 module {
   let ic: InterfaceSpec.IC = actor "aaaaa-aa";

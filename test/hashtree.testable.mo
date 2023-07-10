@@ -1,12 +1,13 @@
-import M "mo:matchers/Matchers";
-import T "mo:matchers/Testable";
-import HT "../src/HashTree";
-import E "../src/Entity";
-import RT "../src/RangeTree";
 import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
 import Option "mo:base/Option";
 import Text "mo:base/Text";
+
+import E "../src/Entity";
+import HT "../src/HashTree";
+import RT "../src/RangeTree";
+import T "Testable";
+
 
 /// This module contains Testable typed helpers functions for the tests in HashTreeTest.mo 
 module {

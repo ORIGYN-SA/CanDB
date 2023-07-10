@@ -1,22 +1,22 @@
 {
-  "canisters": {
-    "simpleDB": {
-      "main": "src/main.mo",
-      "type": "motoko"
-    }
-  },
-  "defaults": {
-    "build": {
-      "args": "",
-      "packtool": "mops sources"
-    }
-  },
-  "dfx": "0.14.1",
-  "networks": {
-    "local": {
-      "bind": "127.0.0.1:8000",
-      "type": "ephemeral"
-    }
-  },
-  "version": 1
-}
+    "canisters": {
+      "simpleDB": {
+        "main": "src/main.mo",
+        "type": "motoko"
+      }
+    },
+    "defaults": {
+      "build": {
+        "args": "",
+        "packtool": "mops sources"
+      }
+    },
+    "dfx": "0.14.1",
+    "networks": {
+      "local": {
+        "bind": "127.0.0.1:8000",
+        "type": "ephemeral"
+      }
+    },
+    "version": 1
+  }

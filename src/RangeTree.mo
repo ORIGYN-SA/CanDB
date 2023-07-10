@@ -1,14 +1,16 @@
 /// "RangeTree" - a stable Red-Black Tree for storing the relationship between an Entity's Sort Key and its Attributes
 
-import RBT "mo:stable-rbtree/StableRBTree";
-import E "./Entity";
 import Buffer "mo:base/Buffer";
-import Text "mo:base/Text";
 import I "mo:base/Iter";
 import Int "mo:base/Int";
 import List "mo:base/List";
-import Stack "mo:base/Stack";
 import Option "mo:base/Option";
+import Stack "mo:base/Stack";
+import Text "mo:base/Text";
+
+import RBT "mo:stable-rbtree/StableRBTree";
+
+import E "./Entity";
 
 module {
 

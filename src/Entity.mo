@@ -185,6 +185,7 @@ module {
           case (?#arrayBool(ab)) { debug_show(ab) };
           case (?#arrayFloat(af)) { debug_show(af) };
           case (?#tree(t)) { debug_show(t) };
+          case (?#candy(c)) { debug_show(c) };
         };
 
         attributeMapToText(l) # "(k=" # k # ", v=" # value # "), " # attributeMapToText(r) ;
