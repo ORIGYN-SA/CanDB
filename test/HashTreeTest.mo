@@ -1,11 +1,12 @@
+import HM "mo:stable-hash-map/FunctionalStableHashMap";
 import M "mo:matchers/Matchers";
 import S "mo:matchers/Suite";
 import T "mo:matchers/Testable";
-import HM "mo:stable-hash-map/FunctionalStableHashMap";
-import RT "../src/RangeTree";
+
+import E "../src/Entity";
 import HT "../src/HashTree";
 import HTM "./HashTreeMatchers";
-import E "../src/Entity";
+import RT "../src/RangeTree";
 import TH "./TestHelpers";
 
 // Setup

@@ -1,11 +1,13 @@
+import Iter "mo:base/Iter";
+import Text "mo:base/Text";
+
 import M "mo:matchers/Matchers";
+import RBT "mo:stable-rbtree/StableRBTree";
 import S "mo:matchers/Suite";
 import T "mo:matchers/Testable";
-import RT "../src/RangeTree";
+
 import E "../src/Entity";
-import RBT "mo:stable-rbtree/StableRBTree";
-import Text "mo:base/Text";
-import Iter "mo:base/Iter";
+import RT "../src/RangeTree";
 import RTT "./RangeTreeMatchers";
 import TH "./TestHelpers";
 

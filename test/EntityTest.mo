@@ -1,8 +1,10 @@
+import Text "mo:base/Text";
+
 import M "mo:matchers/Matchers";
+import RBT "mo:stable-rbtree/StableRBTree";
 import S "mo:matchers/Suite";
 import T "mo:matchers/Testable";
-import Text "mo:base/Text";
-import RBT "mo:stable-rbtree/StableRBTree";
+
 import E "../src/Entity";
 
 let { run;test;suite; } = S;
