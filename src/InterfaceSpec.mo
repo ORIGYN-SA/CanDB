@@ -1,8 +1,8 @@
 /// InterfaceSpec - The IC Management Canister Interface Spec
 
-import Principal "mo:base/Principal";
 import Nat "mo:base/Nat";
 import Nat8 "mo:base/Nat8";
+import Principal "mo:base/Principal";
 
 module {
   // Types adapted from the interface spec https://github.com/dfinity/interface-spec/blob/master/spec/ic.did

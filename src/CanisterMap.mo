@@ -1,9 +1,10 @@
 /// CanisterMap - data structure for keeping track of PK -> CanisterIdList
 
-import RBT "mo:stable-rbtree/StableRBTree";
-import Text "mo:base/Text";
 import I "mo:base/Iter";
-import Buffer "mo:stable-buffer/StableBuffer";
+import Text "mo:base/Text";
+
+import Buffer "mo:stablebuffer/StableBuffer";
+import RBT "mo:stable-rbtree/StableRBTree";
 
 // TODO: Think about modifying this structure to add in the wasm hash of each canister, so can know what version
 // of the wasm it is on when performing rolling upgrades

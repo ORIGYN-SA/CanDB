@@ -1,6 +1,7 @@
 /// Utility functions for the CanDB Index Canister that also help reduce some boilerplate
 
 import Principal "mo:base/Principal";
+
 import CanisterMap "./CanisterMap";
 
 module {

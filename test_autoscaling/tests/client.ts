@@ -8,10 +8,11 @@ import { TestService } from "./declarations/testService/testService.did.d";
 
 const host = "http://127.0.0.1:8000/";
 
+// When running this locally make sure you match the hardcoded canister below with yours
 export function initializeIndexClient(): IndexClient<IndexCanister> {
   return new IndexClient<IndexCanister>({
     IDL: IndexCanisterIDL,
-    canisterId: "rrkah-fqaaa-aaaaa-aaaaq-cai",
+    canisterId: "bkyz2-fmaaa-aaaaa-qaaaq-cai",
     agentOptions: {
       host,
       

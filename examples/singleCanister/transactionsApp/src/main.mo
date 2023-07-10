@@ -1,17 +1,18 @@
 // Simple Example for keeping track of transactions 
 
-import CanDB "../../../src/SingleCanisterCanDB";
-import Entity "../../../src/Entity";
 import Array "mo:base/Array";
-import Iter "mo:base/Iter";
+import Debug "mo:base/Debug";
 import Int "mo:base/Int";
+import Iter "mo:base/Iter";
 import Option "mo:base/Option";
 import Text "mo:base/Text";
-import Debug "mo:base/Debug";
 
-import ULID "mo:ulid/ULID";
 import Source "mo:ulid/Source";
+import ULID "mo:ulid/ULID";
 import XorShift "mo:rand/XorShift";
+
+import CanDB "../../../../src/SingleCanisterCanDB";
+import Entity "../../../../src/Entity";
 
 /// Note: This is example is not meant to be used as is in a system handling assets of value. It does not include 
 /// access control or any security measures, and is purely meant to showcase example usage of CanDB
@@ -244,7 +245,7 @@ actor {
             ("transactionId", #text(transactionId)),
             ("receiverUserId", #text(receiverUserId)),
             ("senderUserId", #text(senderUserId)),
-            ("transactionAmount", #int(Int.neq(transactionAmount))),
+            ("transactionAmount", #int(Int.neg(transactionAmount))),
             ("previousBalance", #int(senderBalance)),
             ("currentBalance", #int(updatedSenderBalance)),
           ]

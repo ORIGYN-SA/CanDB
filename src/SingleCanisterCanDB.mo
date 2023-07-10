@@ -1,9 +1,10 @@
 /// The CanDB module, containing all methods for initializing and interacting with the CanDB data structure
 
+import Text "mo:base/Text";
+
+import E "./Entity";
 import HT "./HashTree";
 import RT "./RangeTree";
-import Text "mo:base/Text";
-import E "./Entity";
 
 
 module {

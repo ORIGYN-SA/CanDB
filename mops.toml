@@ -1,0 +1,19 @@
+[package]
+name = "CanDB"
+version = "1.0.0"
+description = " is a flexible, performant, and horizontally scalable non-relational multi-canister data store built for the Internet Computer."
+repository = "https://github.com/ORIGYN-SA/CanDB"
+
+[dependencies]
+base = "0.9.0"
+stable-hash-map = "https://github.com/canscale/StableHashMap#v0.2.1"
+btree = "https://github.com/canscale/StableHeapBTreeMap#v0.3.2"
+array = "https://github.com/aviate-labs/array.mo#v0.2.0"
+encoding = "https://github.com/aviate-labs/encoding.mo#v0.3.2"
+stable-rbtree = "https://github.com/canscale/StableRBTree#v0.6.1"
+stablebuffer = "https://github.com/skilesare/StableBuffer#v0.2.0"
+map = "https://github.com/ZhenyaUsenko/motoko-hash-map#v7.0.0"
+candy = "https://github.com/icdevs/candy_library#0.2.0"
+
+[dev-dependencies]
+test = "1.0.1"
