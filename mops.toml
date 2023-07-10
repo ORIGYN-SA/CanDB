@@ -1,5 +1,5 @@
 [package]
-name = "CanDB"
+name = "candb"
 version = "1.0.0"
 description = " is a flexible, performant, and horizontally scalable non-relational multi-canister data store built for the Internet Computer."
 repository = "https://github.com/ORIGYN-SA/CanDB"
