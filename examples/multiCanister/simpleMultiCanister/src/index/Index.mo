@@ -8,7 +8,7 @@ import Buffer "mo:stablebuffer/StableBuffer";
 import Admin "../../../../../src/CanDBAdmin";
 import CA "../../../../../src/CanisterActions";
 import CanisterMap "../../../../../src/CanisterMap";
-import UserCanister "../user/user";
+import UserCanister "../user/User";
 import Utils "../../../../../src/Utils";
 
 shared ({caller = owner}) actor class IndexCanister() = this {
