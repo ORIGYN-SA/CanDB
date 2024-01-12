@@ -1,17 +1,16 @@
-{   
-    "version": 1,
-    "dfx": "0.14.1",
-    "defaults": {
-        "build": {
-            "packtool": "mops sources",
-            "args": ""
-        }
-    },
-    "networks": {
-        "local": {
-          "bind": "127.0.0.1:8000",
-          "type": "ephemeral"
-        }
+{
+  "version": 1,
+  "dfx": "0.15.1",
+  "defaults": {
+    "build": {
+      "packtool": "mops sources",
+      "args": ""
     }
-
+  },
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8000",
+      "type": "ephemeral"
+    }
+  }
 }
