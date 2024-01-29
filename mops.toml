@@ -13,7 +13,7 @@ encoding = "https://github.com/aviate-labs/encoding.mo#v0.3.2"
 stable-rbtree = "https://github.com/canscale/StableRBTree#v0.6.1"
 stablebuffer = "https://github.com/skilesare/StableBuffer#v0.2.0"
 map = "https://github.com/ZhenyaUsenko/motoko-hash-map#v7.0.0"
-candy = "https://github.com/icdevs/candy_library#0.3.0"
+candy = "https://github.com/icdevsorg/candy_library#v0.3.0"
 
 [dev-dependencies]
 test = "1.0.1"
