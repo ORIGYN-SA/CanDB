@@ -278,7 +278,6 @@ module {
     let ovAttributeMap = RT.get(db.data, options.sk);
     ignore RT.update(db.data, options.sk, options.updateAttributeMapFunction); // Accordingly docs it always returns `?result`, where `result` is the function result. But in practical tests it may return `null`.
     let nvAttributeMap = RT.get(db.data, options.sk);
-    Debug.print("nvAttributeMap: " # debug_show(nvAttributeMap));
     switch(nvAttributeMap) {
       case null { null };
       case (?map) {
