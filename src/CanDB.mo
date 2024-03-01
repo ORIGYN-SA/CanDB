@@ -274,8 +274,11 @@ module {
   /// See the create() and update() functions in examples/simpleDB/src/main.mo, and the tests in
   /// updateSuite() in test/HashTreeTest for some examples of how to use CanDB.update()
   public func update(db: DB, options: UpdateOptions): ?E.Entity {
-    let ovAttributeMap = RT.get(db.data, options.sk); // inefficient
-    let nvAttributeMap = RT.update(db.data, options.sk, options.updateAttributeMapFunction); // Why does it (always?) return `?result`, where `result` is the function result?
+    // inefficient solution
+    let ovAttributeMap = RT.get(db.data, options.sk);
+    ignore RT.update(db.data, options.sk, options.updateAttributeMapFunction); // Accordingly docs it always returns `?result`, where `result` is the function result. But in practical tests it may return `null`.
+    let nvAttributeMap = RT.get(db.data, options.sk);
+    Debug.print("nvAttributeMap: " # debug_show(nvAttributeMap));
     switch(nvAttributeMap) {
       case null { null };
       case (?map) {
