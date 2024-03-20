@@ -8,6 +8,8 @@ import Iter "mo:base/Iter";
 import Prim "mo:⛔";
 import Text "mo:base/Text";
 
+import { size } "mo:btree/BTree";
+
 import E "Entity";
 import RT "RangeTreeV2";
 
@@ -276,7 +278,14 @@ module {
   public func update(db: DB, options: UpdateOptions): ?E.Entity {
     let ovAttributeMap = RT.update(db.data, options.sk, options.updateAttributeMapFunction);
     switch(ovAttributeMap) {
-      case null { null };
+      // entity did not previously exist, and was created
+      case null {
+        // Normally we would increment the count here, but due to the bug found in https://github.com/ORIGYN-SA/CanDB/issues/28
+        // This will apply a hot fix to the db count if it was off by more than 1
+        db.count := size(db.data);
+        null
+      };
+      // entity previously existed, return the original entity 
       case (?map) {
         ?{
           pk = db.pk;
